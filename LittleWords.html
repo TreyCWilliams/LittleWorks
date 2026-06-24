@@ -1026,7 +1026,7 @@ $('#favFilter').onclick=()=>{ Sound.tap(); state.favOnly=!state.favOnly; state.i
    RECORDING  (camera + mic + auto-stop on word)
    ============================================================ */
 const Rec = (()=>{
-  let stream, mediaRec, chunks=[], recog, autoTimer, tickTimer, startTs, currentCard, gotWord=false, promptToken=0, finishing=false;
+  let stream, mediaRec, chunks=[], recog, autoTimer, tickTimer, startTs, currentCard, gotWord=false, promptToken=0;
 
   function supportedMime(){
     const opts=['video/mp4','video/webm;codecs=vp9,opus','video/webm;codecs=vp8,opus','video/webm'];
@@ -1074,14 +1074,13 @@ const Rec = (()=>{
   function start(){
     if(!stream){ toast('Camera not ready'); return; }
     if(mediaRec&&mediaRec.state==='recording') return;
-    Sound.unlock(); chunks=[]; gotWord=false; finishing=false; startTs=Date.now();
+    Sound.unlock(); chunks=[]; gotWord=false; startTs=Date.now();
     $('#recTime').textContent='0:00';
     const mime=supportedMime();
     try{ mediaRec=new MediaRecorder(stream, mime?{mimeType:mime}:undefined); }
     catch(e){ mediaRec=new MediaRecorder(stream); }
     mediaRec.ondataavailable=e=>{ if(e.data&&e.data.size) chunks.push(e.data); };
     mediaRec.onstop=finish;
-    mediaRec.onerror=()=>stop(false);
     mediaRec.start();
     $('#recPip').classList.add('on');
     $('#recControls').innerHTML='<button class="btn btn-stop" id="stopRec">⏹ Stop</button><button class="btn btn-correct" id="markRec">✅ Got it!</button>';
@@ -1094,33 +1093,27 @@ const Rec = (()=>{
     },300);
     // safety auto-stop
     autoTimer=setTimeout(()=>stop(false),15000);
-    $('#recHint').textContent='Recording... say the word together. I am listening.';
     // speech recognition for auto-stop on the word
     startListening();
+    $('#recHint').textContent='Recording… say the word together. I’m listening 👂';
   }
   function startListening(){
     const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
-    if(!SR){ $('#recHint').innerHTML='Recording... tap <b>Got it!</b> when they say it. Auto-listen is not supported on this device.'; return; }
+    if(!SR){ $('#recHint').innerHTML='Recording… tap <b>Got it!</b> when they say it (auto-listen isn’t supported on this device).'; return; }
     try{
-      recog=new SR(); recog.lang='en-US'; recog.continuous=false; recog.interimResults=true; recog.maxAlternatives=3;
+      recog=new SR(); recog.lang='en-US'; recog.continuous=true; recog.interimResults=true;
       $('#listenPip').classList.add('on');
       const target=currentCard.word.toLowerCase().replace(/[^a-z ]/g,'').trim();
       recog.onresult=ev=>{
         let txt='';
-        for(let i=ev.resultIndex;i<ev.results.length;i++){
-          const result=ev.results[i];
-          for(let j=0;j<result.length;j++) txt+=result[j].transcript+' ';
-        }
+        for(let i=ev.resultIndex;i<ev.results.length;i++) txt+=ev.results[i][0].transcript+' ';
         txt=txt.toLowerCase();
         if(matchWord(txt,target)){ gotWord=true; stop(true); }
       };
-      recog.onerror=()=>{ $('#listenPip').classList.remove('on'); };
-      recog.onend=()=>{ $('#listenPip').classList.remove('on'); };
+      recog.onerror=()=>{};
+      recog.onend=()=>{ if(mediaRec&&mediaRec.state==='recording'){ try{recog.start();}catch(e){} } };
       recog.start();
-    }catch(e){
-      $('#listenPip').classList.remove('on');
-      $('#recHint').innerHTML='Recording... tap <b>Got it!</b> when they say it. Auto-listen is not available here.';
-    }
+    }catch(e){ $('#listenPip').classList.remove('on'); }
   }
   function matchWord(txt,target){
     if(!target) return false;
@@ -1131,20 +1124,10 @@ const Rec = (()=>{
     clearTimeout(autoTimer); clearInterval(tickTimer);
     if(recog){ try{recog.onend=null;recog.stop();}catch(e){} recog=null; }
     $('#listenPip').classList.remove('on');
+    if(mediaRec && mediaRec.state!=='inactive'){ try{mediaRec.stop();}catch(e){} }
     gotWord = gotWord || !!correct;
-    if(finishing) return;
-    if(mediaRec && mediaRec.state!=='inactive'){
-      finishing=true;
-      $('#recControls').innerHTML='<button class="btn btn-ghost btn-wide" disabled>Saving...</button>';
-      $('#recHint').textContent='Saving recording...';
-      try{ mediaRec.stop(); }catch(e){ finish(); }
-    }else{
-      finish();
-    }
   }
   async function finish(){
-    if(!finishing && (!mediaRec || mediaRec.state==='recording')) return;
-    finishing=false;
     $('#recPip').classList.remove('on');
     const mime=(mediaRec&&mediaRec.mimeType)||'video/webm';
     const blob=new Blob(chunks,{type:mime});
