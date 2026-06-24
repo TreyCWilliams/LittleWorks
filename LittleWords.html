@@ -580,6 +580,7 @@ button:focus-visible, .tile:focus-visible{outline:4px solid var(--grape);outline
           <h2>Privacy & data</h2>
           <div class="hint" style="text-align:left;margin:0 0 14px">Recordings, parent voices, and generated voice cache stay on this iPad. New generated voice audio is requested through your private server proxy.</div>
           <button class="dangerbtn" id="exportBtn" style="border-color:var(--sky-deep);color:var(--sky-deep)">⬇️ Save a backup file</button>
+          <button class="dangerbtn" id="resetVoices">Refresh generated voices</button>
           <button class="dangerbtn" id="resetPotty">Clear potty history</button>
           <button class="dangerbtn" id="resetAll">Erase everything</button>
         </div>
@@ -759,7 +760,8 @@ const Sound = (()=>{
 // exposed in this frontend file. Configure the key, voice, model, and voice
 // settings in server.js / environment variables.
 const ELEVENLABS_TTS_ENDPOINT='/api/tts';
-let preferredVoice=null, activeWordAudio=null, activeWordUrl='';
+const TTS_CACHE_FALLBACK_VERSION='elevenlabs-cache-v3';
+let preferredVoice=null, activeWordAudio=null, activeWordUrl='', ttsConfigKey='';
 function refreshVoices(){
   if(!('speechSynthesis' in window)) return;
   const voices=speechSynthesis.getVoices();
@@ -787,15 +789,32 @@ if('speechSynthesis' in window){
 function normalizeTTSKey(text){
   return String(text||'').trim().replace(/\s+/g,' ').toLowerCase();
 }
-async function getCachedElevenAudio(text){
+async function getTTSConfigKey(){
+  if(ttsConfigKey) return ttsConfigKey;
+  try{
+    const res=await fetch(ELEVENLABS_TTS_ENDPOINT,{method:'GET',cache:'no-store'});
+    if(res.ok){
+      const data=await res.json();
+      ttsConfigKey=String(data.cacheKey||'').trim();
+    }
+  }catch(e){}
+  if(!ttsConfigKey) ttsConfigKey=TTS_CACHE_FALLBACK_VERSION;
+  return ttsConfigKey;
+}
+async function makeTTSCacheKey(text){
   const key=normalizeTTSKey(text);
+  if(!key) return '';
+  return `${await getTTSConfigKey()}::${key}`;
+}
+async function getCachedElevenAudio(text){
+  const key=await makeTTSCacheKey(text);
   if(!key) return null;
   const cached=await DB.get('ttsAudio',key);
   return cached&&cached.blob?cached:null;
 }
 async function ensureElevenAudio(text){
   const clean=String(text||'').trim().replace(/\s+/g,' ');
-  const key=normalizeTTSKey(clean);
+  const key=await makeTTSCacheKey(clean);
   if(!key) return null;
   const cached=await DB.get('ttsAudio',key);
   if(cached&&cached.blob) return cached;
@@ -807,7 +826,7 @@ async function ensureElevenAudio(text){
   if(!res.ok) throw new Error('ElevenLabs TTS failed');
   const blob=await res.blob();
   if(!blob||blob.size<200) throw new Error('Empty ElevenLabs audio');
-  const rec={key,text:clean,blob,type:blob.type||'audio/mpeg',ts:Date.now()};
+  const rec={key,text:clean,blob,type:blob.type||'audio/mpeg',voiceId:res.headers.get('X-ElevenLabs-Voice-Id')||'',ts:Date.now()};
   await DB.put('ttsAudio',rec);
   return rec;
 }
@@ -1333,7 +1352,7 @@ async function renderCardManager(){
       const practice=p?`practiced ${p.count}x · ${p.correct} correct`:'not practiced yet';
       const el=document.createElement('div'); el.className='pcard';
       el.innerHTML=`<div class="pe">${c.photo?`<img src="${c.photo}" alt="">`:esc(c.emoji)}</div>
-        <div class="pinfo"><b>${esc(c.word)}</b><small>${practice} · ${hasVoice?'parent voice saved':'device voice'}</small></div>
+        <div class="pinfo"><b>${esc(c.word)}</b><small>${practice} · ${hasVoice?'parent voice saved':'generated voice'}</small></div>
         <div class="pactions">
           <button class="voice-btn${hasVoice?' has':''}" aria-label="Parent voice for ${esc(c.word)}">${hasVoice?'🔊':'🎙️'}</button>
           ${c.custom?'<button class="pm" aria-label="Delete">🗑</button>':''}
@@ -1612,6 +1631,7 @@ $('#exportBtn').onclick=async()=>{
   a.download='little-words-backup-'+todayKey()+'.json'; a.click();
   toast('Backup saved ⬇️ (audio/video stay on device)');
 };
+$('#resetVoices').onclick=()=>requestParentGate(async()=>{ if(confirm('Refresh generated ElevenLabs voices? Parent-recorded voices stay saved.')){ await DB.clear('ttsAudio'); ttsConfigKey=''; toast('Generated voices will refresh'); } });
 $('#resetPotty').onclick=()=>requestParentGate(async()=>{ if(confirm('Clear all potty history? Star chart resets too.')){ await DB.clear('potty'); state.settings.stars=0; await saveSettings(); toast('Potty history cleared'); } });
 $('#resetAll').onclick=()=>requestParentGate(async()=>{ if(confirm('Erase ALL data — cards, recordings, generated voices, parent voices, potty logs, settings? This cannot be undone.')){ await DB.clear('cards'); await DB.clear('recordings'); await DB.clear('voices'); await DB.clear('ttsAudio'); await DB.clear('potty'); await DB.clear('kv'); location.reload(); } });
 

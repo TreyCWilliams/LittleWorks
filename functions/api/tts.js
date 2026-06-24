@@ -85,12 +85,34 @@ export async function onRequestPost(context) {
   return json({ error: 'ElevenLabs request failed', ...lastFailure }, 502);
 }
 
+export async function onRequestGet(context) {
+  return json(ttsConfig(context.env));
+}
+
 export async function onRequest(context) {
   if (context.request.method === 'OPTIONS') return new Response(null, { status: 204 });
   return json({ error: 'Method not allowed' }, 405);
 }
 
-function json(data, status) {
+function ttsConfig(env) {
+  const primaryVoiceId = env.ELEVENLABS_VOICE_ID || '';
+  const fallbackVoiceId = env.ELEVENLABS_FALLBACK_VOICE_ID || 'FGY2WhTYpPnrIDTdsKH5';
+  const modelId = env.ELEVENLABS_MODEL_ID || 'eleven_multilingual_v2';
+  const outputFormat = env.ELEVENLABS_OUTPUT_FORMAT || 'mp3_44100_128';
+  const stability = String(env.ELEVENLABS_STABILITY || 0.42);
+  const similarity = String(env.ELEVENLABS_SIMILARITY_BOOST || 0.86);
+  const style = String(env.ELEVENLABS_STYLE || 0.65);
+  const speakerBoost = String(env.ELEVENLABS_USE_SPEAKER_BOOST || 'true') !== 'false';
+  return {
+    configured: Boolean(env.ELEVENLABS_API_KEY && primaryVoiceId),
+    primaryVoiceId,
+    fallbackVoiceId,
+    modelId,
+    cacheKey: ['elevenlabs-v1', primaryVoiceId, fallbackVoiceId, modelId, outputFormat, stability, similarity, style, speakerBoost].join('|'),
+  };
+}
+
+function json(data, status = 200) {
   return new Response(JSON.stringify(data), {
     status,
     headers: { 'Content-Type': 'application/json' },

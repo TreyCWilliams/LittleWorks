@@ -129,6 +129,26 @@ async function handleTTS(req, res) {
   }
 }
 
+function ttsConfig() {
+  return {
+    configured: Boolean(ELEVENLABS_API_KEY && ELEVENLABS_VOICE_ID),
+    primaryVoiceId: ELEVENLABS_VOICE_ID,
+    fallbackVoiceId: ELEVENLABS_FALLBACK_VOICE_ID,
+    modelId: ELEVENLABS_MODEL_ID,
+    cacheKey: [
+      'elevenlabs-v1',
+      ELEVENLABS_VOICE_ID,
+      ELEVENLABS_FALLBACK_VOICE_ID,
+      ELEVENLABS_MODEL_ID,
+      ELEVENLABS_OUTPUT_FORMAT,
+      String(VOICE_SETTINGS.stability),
+      String(VOICE_SETTINGS.similarity_boost),
+      String(VOICE_SETTINGS.style),
+      String(VOICE_SETTINGS.use_speaker_boost),
+    ].join('|'),
+  };
+}
+
 function serveStatic(req, res) {
   const requestUrl = new URL(req.url, `http://${req.headers.host || 'localhost'}`);
   const pathname = decodeURIComponent(requestUrl.pathname === '/' ? '/LittleWords.html' : requestUrl.pathname);
@@ -144,6 +164,7 @@ function serveStatic(req, res) {
 const server = http.createServer(async (req, res) => {
   if (req.method === 'OPTIONS') return send(res, 204, {}, '');
   if (req.url && req.url.startsWith('/api/tts')) {
+    if (req.method === 'GET') return sendJson(res, 200, ttsConfig());
     if (req.method !== 'POST') return sendJson(res, 405, {error: 'Method not allowed'});
     return handleTTS(req, res);
   }
