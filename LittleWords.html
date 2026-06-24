@@ -1,0 +1,2009 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+<title>Little Words</title>
+
+<!-- Full-screen, app-like behaviour when added to the iPad Home Screen -->
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="default" />
+<meta name="apple-mobile-web-app-title" content="Little Words" />
+<meta name="theme-color" content="#FCF8F3" />
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Crect width='180' height='180' rx='40' fill='%23F6A089'/%3E%3Ctext x='90' y='128' font-size='110' text-anchor='middle'%3E%F0%9F%90%B6%3C/text%3E%3C/svg%3E" />
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Fredoka:wght@400;500;600;700&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.2/jspdf.umd.min.js"></script>
+
+<style>
+/* ============================================================
+   LITTLE WORDS  —  bright & playful design system
+   A sunny sky world: candy buttons, rainbow categories, a mascot.
+   ============================================================ */
+:root{
+  --ink:#3A2E55;
+  --ink-soft:#6E5F8C;
+  --muted:#A99FC4;
+  --line:#EDE7F7;
+  --surface:#FFFFFF;
+
+  /* primary brights */
+  --coral:#FF7A6B;   --coral-deep:#E8503F;
+  --sky:#43B6FF;     --sky-deep:#1E8FE0;
+  --grass:#3DCB8F;   --grass-deep:#1FA86F;
+  --sun:#FFD23C;     --sun-deep:#F2A615;
+  --grape:#9B6BFF;   --grape-deep:#7A45E8;
+  --bubble:#FF74B1;  --bubble-deep:#E84B92;
+
+  --shadow-sm:0 3px 10px rgba(90,60,140,.10);
+  --shadow:0 14px 30px rgba(90,60,140,.16);
+  --shadow-lg:0 26px 56px rgba(90,60,140,.24);
+
+  --r-lg:38px; --r-md:26px; --r-sm:18px; --r-pill:999px;
+  --tap:74px;
+  --display:'Baloo 2','Fredoka', ui-rounded, 'SF Pro Rounded', system-ui, sans-serif;
+  --body:'Nunito', ui-rounded, system-ui, sans-serif;
+}
+
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+html,body{height:100%;}
+body{
+  margin:0;
+  font-family:var(--body);
+  color:var(--ink);
+  background:linear-gradient(180deg,#9BDBFF 0%,#C4ECFF 26%,#E9F8FF 52%,#FFF7E6 100%);
+  overflow:hidden;
+  -webkit-user-select:none; user-select:none;
+  -webkit-touch-callout:none;
+  overscroll-behavior:none;
+}
+button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit;}
+button:focus-visible, .tile:focus-visible{outline:4px solid var(--grape);outline-offset:3px;}
+.app{position:fixed; inset:0; padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left); display:flex; flex-direction:column;}
+
+/* ---------- decorative sky ---------- */
+.sky{position:absolute; inset:0; z-index:0; overflow:hidden; pointer-events:none;}
+.sky .sun{position:absolute; top:-46px; right:-42px; width:196px; height:196px; border-radius:50%;
+  background:radial-gradient(circle at 38% 36%,#FFF4A3 0 22%,#FFE16A 38%,#FFC83C 72%);
+  box-shadow:0 0 44px 14px rgba(255,232,117,.72),0 0 110px 42px rgba(255,206,60,.45);
+  animation:sunshine 4.4s ease-in-out infinite;}
+.sky .sun::before{content:"";position:absolute;inset:-52px;border-radius:50%;
+  background:repeating-conic-gradient(from 0deg,rgba(255,230,128,.62) 0deg 9deg,transparent 9deg 22deg);
+  animation:sunspin 26s linear infinite;}
+.sky .sun::after{content:"";position:absolute;inset:40px;border-radius:50%;background:rgba(255,255,255,.24);filter:blur(8px);}
+@keyframes sunshine{0%,100%{transform:scale(1);filter:saturate(1)}50%{transform:scale(1.04);filter:saturate(1.14)}}
+@keyframes sunspin{to{transform:rotate(360deg)}}
+.cloud{position:absolute; background:#fff; border-radius:60px; opacity:.92; filter:drop-shadow(0 10px 14px rgba(120,150,200,.18)); will-change:transform;}
+.cloud::before,.cloud::after{content:""; position:absolute; background:#fff; border-radius:50%;}
+.cloud.c1{width:130px;height:42px; top:60px; left:-170px; animation:cloudfloat 44s linear infinite;}
+.cloud.c1::before{width:60px;height:60px; top:-26px; left:24px;}
+.cloud.c1::after{width:46px;height:46px; top:-16px; left:74px;}
+.cloud.c2{width:100px;height:34px; top:140px; left:-140px; opacity:.8; animation:cloudfloat 58s linear infinite -18s;}
+.cloud.c2::before{width:46px;height:46px; top:-20px; left:18px;}
+.cloud.c2::after{width:38px;height:38px; top:-12px; left:54px;}
+.cloud.c3{width:80px;height:28px; top:240px; left:-120px; opacity:.65; animation:cloudfloat 68s linear infinite -36s;}
+.cloud.c3::before{width:38px;height:38px; top:-16px; left:14px;}
+@keyframes cloudfloat{from{transform:translateX(-8vw)} to{transform:translateX(118vw)}}
+
+/* ---------- screens ---------- */
+.screen{position:absolute; inset:0; display:none; flex-direction:column; z-index:1;}
+.screen.active{display:flex;}
+.scroll{flex:1; overflow-y:auto; -webkit-overflow-scrolling:touch; padding:0 22px 44px;}
+
+/* ---------- top bar ---------- */
+.topbar{display:flex; align-items:center; gap:14px; padding:16px 22px 10px;}
+.topbar h1{font-family:var(--display); font-weight:800; font-size:2rem; margin:0; color:#fff; text-shadow:0 3px 0 rgba(120,90,180,.25), 0 6px 14px rgba(90,60,140,.2);}
+.iconbtn{width:62px;height:62px;border-radius:var(--r-pill);background:#fff; box-shadow:0 5px 0 #E3DAF3, var(--shadow-sm); display:grid;place-items:center; font-size:1.65rem; transition:transform .12s, box-shadow .12s;}
+.iconbtn:active{transform:translateY(4px); box-shadow:0 1px 0 #E3DAF3;}
+.spacer{flex:1;}
+
+/* ============================================================ HOME */
+.home-head{padding:18px 26px 4px; position:relative; display:flex; align-items:center; gap:16px;}
+.mascot{width:108px; height:108px; flex:0 0 auto; animation:bob 3s ease-in-out infinite;}
+@keyframes bob{0%,100%{transform:translateY(0) rotate(-3deg)} 50%{transform:translateY(-10px) rotate(3deg)}}
+.mascot svg{width:100%; height:100%; filter:drop-shadow(0 8px 10px rgba(220,160,20,.35));}
+.mascot-pop svg{width:100%; height:100%; filter:drop-shadow(0 12px 18px rgba(220,160,20,.5));}
+.bubble{position:relative; background:#fff; border-radius:22px; padding:14px 18px; box-shadow:var(--shadow); font-family:var(--display); font-weight:700; font-size:1.5rem; color:var(--ink); line-height:1.1;}
+.bubble::after{content:""; position:absolute; left:-12px; top:28px; border:10px solid transparent; border-right-color:#fff;}
+.home-head .sub{display:none;}
+.home-tiles{flex:1; display:flex; flex-direction:column; gap:24px; padding:14px 26px 30px; justify-content:center;}
+@media(min-width:760px){ .home-tiles{flex-direction:row;} }
+.tile{flex:1; position:relative; overflow:hidden; border:none; border-radius:var(--r-lg); padding:30px; text-align:left; display:flex; flex-direction:column; justify-content:flex-end; min-height:240px; color:#fff; transition:transform .12s, box-shadow .12s;}
+.tile-words{background:linear-gradient(160deg,#FF9A6B,#FF6F8E); box-shadow:0 12px 0 #D94f6f, 0 22px 36px rgba(200,70,110,.34);}
+.tile-potty{background:linear-gradient(160deg,#5BD0FF,#4F8BFF); box-shadow:0 12px 0 #2f6ad9, 0 22px 36px rgba(60,110,210,.34);}
+.tile:active{transform:translateY(8px); box-shadow:0 4px 0 rgba(0,0,0,.2);}
+.tile-art{position:absolute; inset:0; display:block; opacity:.98; transform-origin:center; animation:tilefloat 5.2s ease-in-out infinite; pointer-events:none;}
+.tile-art svg{width:100%;height:100%;display:block;filter:drop-shadow(0 14px 18px rgba(0,0,0,.16));}
+.tile-potty .tile-art{animation-delay:-1.3s;}
+@keyframes tilefloat{0%,100%{transform:translateY(0) rotate(-1deg)}50%{transform:translateY(-8px) rotate(1deg)}}
+.tile .tlabel,.tile .tdesc{position:relative;z-index:2;}
+.tile .tlabel{font-family:var(--display); font-weight:800; font-size:2.4rem; text-shadow:0 3px 8px rgba(70,35,70,.38);}
+.tile .tdesc{font-weight:900; font-size:1.1rem; opacity:.96; text-shadow:0 2px 6px rgba(70,35,70,.35); margin-top:2px;}
+
+/* ============================================================ FLASHCARDS */
+.cat-strip{display:flex; gap:12px; overflow-x:auto; padding:6px 22px 16px; -webkit-overflow-scrolling:touch;}
+.cat-strip::-webkit-scrollbar{display:none;}
+.chip{flex:0 0 auto; padding:13px 22px; border-radius:var(--r-pill); background:#fff; box-shadow:0 4px 0 #E3DAF3, var(--shadow-sm); font-weight:900; font-size:1.05rem; color:var(--ink-soft); display:flex; align-items:center; gap:9px; transition:transform .12s, box-shadow .12s;}
+.chip .e{font-size:1.3rem;}
+.chip.active{background:var(--cv,#FF7A6B); color:#fff; box-shadow:0 4px 0 var(--cd,#E8503F);}
+.chip:active{transform:translateY(3px); box-shadow:0 1px 0 #E3DAF3;}
+
+.card-stage{flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:6px 22px 10px; min-height:0;}
+.flashcard{width:100%; max-width:520px; aspect-ratio:1/1; max-height:44vh; border-radius:44px; padding:20px;
+  background:linear-gradient(160deg, var(--ct,#DFF3FF), var(--cv,#43B6FF));
+  box-shadow:0 14px 0 var(--cd,#1E8FE0), 0 30px 50px rgba(90,60,140,.26);
+  position:relative; transition:transform .2s cubic-bezier(.34,1.56,.64,1);}
+.flashcard .pic{width:100%; height:100%; background:#fff; border-radius:30px; display:flex; align-items:center; justify-content:center; font-size:min(30vh,13rem); line-height:1; box-shadow:inset 0 -8px 0 rgba(0,0,0,.05); overflow:hidden;}
+.flashcard .pic img.photo{width:100%;height:100%;object-fit:cover;border-radius:30px;}
+.flashcard.correct{animation:happywobble .7s ease;}
+@keyframes happywobble{0%{transform:scale(1) rotate(0)}25%{transform:scale(1.07) rotate(-3deg)}50%{transform:scale(1.05) rotate(3deg)}75%{transform:scale(1.06) rotate(-1.5deg)}100%{transform:scale(1) rotate(0)}}
+.word{font-family:var(--display); font-weight:800; font-size:2.5rem; margin:22px 0 8px; text-align:center; line-height:1; color:#fff; background:var(--cv,#43B6FF); padding:10px 34px; border-radius:var(--r-pill); box-shadow:0 7px 0 var(--cd,#1E8FE0);}
+.fav-star{position:absolute; top:14px; right:16px; font-size:2rem; opacity:.4; transition:transform .15s, opacity .15s; z-index:2;}
+.fav-star.on{opacity:1; transform:scale(1.2) rotate(8deg); filter:drop-shadow(0 3px 4px rgba(240,180,20,.6));}
+.recbadge{position:absolute; top:14px; left:16px; background:#fff; color:var(--ink-soft); font-weight:900; font-size:.9rem; padding:8px 15px; border-radius:var(--r-pill); display:flex; gap:6px; align-items:center; box-shadow:var(--shadow-sm); z-index:2;}
+
+.actions{display:flex; align-items:center; justify-content:center; gap:18px; padding:6px 22px 18px;}
+.bigbtn{width:84px;height:84px;border-radius:var(--r-pill); display:grid;place-items:center; font-size:2rem; color:#fff; transition:transform .1s, box-shadow .1s;}
+.bigbtn:active{transform:translateY(5px);}
+.bigbtn.nav{width:70px;height:70px;background:#fff;font-size:1.9rem;color:var(--grape); box-shadow:0 6px 0 #E3DAF3; font-weight:900;}
+.bigbtn.nav:active{box-shadow:0 1px 0 #E3DAF3;}
+.bigbtn.hear{background:linear-gradient(160deg,#5BD0FF,#1E8FE0); box-shadow:0 7px 0 var(--sky-deep);}
+.bigbtn.hear:active{box-shadow:0 2px 0 var(--sky-deep);}
+.bigbtn.rec{background:linear-gradient(160deg,#FF9A6B,#FF5D6C); width:98px;height:98px; font-size:2.5rem; box-shadow:0 8px 0 var(--coral-deep);}
+.bigbtn.rec:active{box-shadow:0 2px 0 var(--coral-deep);}
+.dots{display:flex;gap:7px;justify-content:center;padding-bottom:6px; flex-wrap:wrap; max-width:90%;}
+.dot{width:9px;height:9px;border-radius:50%;background:rgba(120,90,180,.25);}
+.dot.on{background:var(--cv,#FF7A6B); width:24px;border-radius:var(--r-pill);}
+
+/* ============================================================ RECORDING SHEET */
+.sheet-back{position:absolute; inset:0; background:rgba(58,46,85,.55); backdrop-filter:blur(6px); display:none; align-items:flex-end; justify-content:center; z-index:50;}
+.sheet-back.open{display:flex;}
+.sheet{width:100%; max-width:680px; background:linear-gradient(180deg,#F4ECFF,#FFF7EC); border-radius:38px 38px 0 0; padding:18px 22px calc(26px + env(safe-area-inset-bottom)); box-shadow:0 -20px 50px rgba(0,0,0,.25); animation:slideup .28s cubic-bezier(.34,1.4,.5,1); max-height:94%; overflow-y:auto;}
+@keyframes slideup{from{transform:translateY(100%)}to{transform:translateY(0)}}
+.sheet-grab{width:50px;height:6px;border-radius:9px;background:#D9CEF0;margin:0 auto 14px;}
+.sheet h2{font-family:var(--display);font-weight:800;font-size:1.7rem;margin:0 0 4px;text-align:center;}
+.sheet .target{text-align:center;color:var(--ink-soft);font-weight:900;margin-bottom:14px;}
+.sheet .target b{color:var(--coral-deep);}
+.preview-wrap{position:relative;width:100%;aspect-ratio:4/3;background:#2b2340;border-radius:var(--r-md);overflow:hidden;display:flex;align-items:center;justify-content:center;box-shadow:var(--shadow);}
+.preview-wrap video{width:100%;height:100%;object-fit:cover;background:#2b2340;transform:scaleX(-1);}
+.preview-wrap video.playback{transform:none;}
+.preview-wrap .miniword{position:absolute;left:18px;right:18px;bottom:16px;background:rgba(255,255,255,.96);color:var(--ink);font-family:var(--display);font-weight:800;font-size:clamp(1.75rem,7vw,2.6rem);line-height:1;text-align:center;padding:12px 20px;border-radius:var(--r-pill);box-shadow:var(--shadow-sm);}
+.preview-wrap .miniemoji{position:absolute;right:18px;bottom:88px;width:min(34vw,150px);height:min(34vw,150px);background:rgba(255,255,255,.96);border-radius:28px;display:grid;place-items:center;font-size:min(22vw,6.8rem);line-height:1;box-shadow:var(--shadow-sm);overflow:hidden;}
+.preview-wrap .miniemoji img{width:100%;height:100%;object-fit:cover;}
+.rec-pip{position:absolute;left:14px;top:14px;display:none;align-items:center;gap:8px;background:rgba(0,0,0,.5);color:#fff;font-weight:900;padding:7px 14px;border-radius:var(--r-pill);font-size:.95rem;}
+.rec-pip.on{display:flex;}
+.rec-pip .blink{width:12px;height:12px;border-radius:50%;background:#ff5d5d;animation:blink 1s steps(2) infinite;}
+@keyframes blink{50%{opacity:.25}}
+.listening{position:absolute;right:14px;top:14px;display:none;align-items:center;gap:8px;background:rgba(61,203,143,.95);color:#fff;font-weight:900;padding:7px 14px;border-radius:var(--r-pill);font-size:.9rem;}
+.listening.on{display:flex;}
+.listening .ear{animation:earpulse 1.4s ease-in-out infinite;}
+@keyframes earpulse{0%,100%{transform:scale(1)}50%{transform:scale(1.3)}}
+.sheet-row{display:flex;gap:12px;margin-top:16px;}
+.btn{flex:1;border-radius:var(--r-md);padding:18px;font-weight:900;font-size:1.15rem;transition:transform .1s, box-shadow .1s; display:flex;align-items:center;justify-content:center;gap:10px; color:#fff;}
+.btn:active{transform:translateY(4px);}
+.btn-rec{background:linear-gradient(160deg,#FF9A6B,#FF5D6C); box-shadow:0 6px 0 var(--coral-deep);}
+.btn-stop{background:#fff;color:var(--coral-deep);box-shadow:0 6px 0 #F3C7C1; border:3px solid var(--coral);}
+.btn-correct{background:linear-gradient(160deg,#5BE0A8,#1FA86F); box-shadow:0 6px 0 var(--grass-deep);}
+.btn-ghost{background:#fff;color:var(--ink-soft);box-shadow:0 6px 0 #E3DAF3;}
+.btn-wide{width:100%;}
+.hint{text-align:center;color:var(--muted);font-weight:800;font-size:.92rem;margin-top:12px;line-height:1.45;}
+.saved-list{margin-top:18px;}
+.saved-list h3{font-family:var(--display);font-weight:700;font-size:1.2rem;margin:0 0 10px;}
+.rec-item{display:flex;align-items:center;gap:12px;background:#fff;border-radius:var(--r-sm);padding:12px 14px;margin-bottom:10px;box-shadow:var(--shadow-sm);}
+.rec-item .play{width:50px;height:50px;border-radius:50%;background:linear-gradient(160deg,#5BD0FF,#1E8FE0);color:#fff;display:grid;place-items:center;font-size:1.25rem;flex:0 0 auto;box-shadow:0 4px 0 var(--sky-deep);}
+.rec-item .meta{flex:1;font-weight:900;font-size:.98rem;}
+.rec-item .meta small{display:block;color:var(--muted);font-weight:800;}
+.rec-item .ok{color:var(--grass-deep);font-size:1.35rem;}
+.rec-item .del{color:var(--muted);font-size:1.2rem;padding:8px;}
+
+/* ============================================================ POTTY */
+.section{background:#fff;border-radius:var(--r-md);box-shadow:var(--shadow-sm);padding:20px;margin-bottom:18px;}
+.section h2{font-family:var(--display);font-weight:700;font-size:1.4rem;margin:0 0 14px;}
+.potty-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;}
+@media(min-width:620px){.potty-grid{grid-template-columns:repeat(3,1fr);}}
+.potty-btn{border-radius:var(--r-md);padding:22px 12px;display:flex;flex-direction:column;align-items:center;gap:8px;font-weight:900;font-size:1.1rem;color:#fff;transition:transform .1s, box-shadow .1s;min-height:128px;justify-content:center;}
+.potty-btn:active{transform:translateY(5px);}
+.potty-btn .pe{font-size:2.8rem;line-height:1;}
+.p-pee{background:linear-gradient(160deg,#FFD86B,#F2A615); box-shadow:0 7px 0 #d98e0c;}
+.p-poop{background:linear-gradient(160deg,#D7A877,#B07B45); box-shadow:0 7px 0 #8a5e30;}
+.p-both{background:linear-gradient(160deg,#5BE0A8,#1FA86F); box-shadow:0 7px 0 #178a5b;}
+.p-try{background:linear-gradient(160deg,#5BD0FF,#1E8FE0); box-shadow:0 7px 0 #1773bb;}
+.p-acc{background:linear-gradient(160deg,#FF9DC0,#E84B92); box-shadow:0 7px 0 #c93a79;}
+.p-dry{background:linear-gradient(160deg,#B79DFF,#7A45E8); box-shadow:0 7px 0 #6234c0;}
+.sticker-row{display:flex;flex-wrap:wrap;gap:12px;align-items:center;}
+.sticker{width:56px;height:56px;border-radius:50%;background:#F3EEFB;display:grid;place-items:center;font-size:1.7rem;border:3px dashed #D9CEF0;color:#C9BCE8;}
+.sticker.filled{border:none;background:linear-gradient(160deg,#FFE680,#FFC83C);color:#fff;box-shadow:0 5px 0 #f2a615;animation:pop .4s cubic-bezier(.34,1.7,.5,1);}
+@keyframes pop{0%{transform:scale(.3)}100%{transform:scale(1)}}
+.goal-note{margin-top:14px;font-weight:900;color:var(--ink-soft);}
+.timeline{display:flex;flex-direction:column;}
+.tl-item{display:flex;align-items:center;gap:14px;padding:12px 4px;border-bottom:2px solid var(--line);}
+.tl-item:last-child{border-bottom:none;}
+.tl-item .ti{width:48px;height:48px;border-radius:15px;display:grid;place-items:center;font-size:1.6rem;color:#fff;flex:0 0 auto;}
+.tl-item .tt{flex:1;font-weight:900;}
+.tl-item .tt small{display:block;color:var(--muted);font-weight:800;}
+.tl-item .tdel{color:var(--muted);padding:8px;font-size:1.1rem;}
+.empty{text-align:center;color:var(--muted);font-weight:900;padding:26px 10px;}
+.stat-row{display:flex;gap:12px;}
+.stat{flex:1;text-align:center;border-radius:var(--r-sm);padding:18px 8px;color:#fff;}
+.stat.s1{background:linear-gradient(160deg,#5BE0A8,#1FA86F);}
+.stat.s2{background:linear-gradient(160deg,#FF9DC0,#E84B92);}
+.stat.s3{background:linear-gradient(160deg,#5BD0FF,#1E8FE0);}
+.stat .n{font-family:var(--display);font-weight:800;font-size:2.1rem;line-height:1;}
+.stat .l{font-weight:900;font-size:.85rem;margin-top:6px;opacity:.95;}
+.bars{display:flex;align-items:flex-end;gap:10px;height:140px;padding-top:10px;}
+.bar-col{flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;height:100%;justify-content:flex-end;}
+.bar{width:100%;max-width:36px;background:linear-gradient(180deg,#5BE0A8,#1FA86F);border-radius:10px 10px 5px 5px;min-height:6px;transition:height .4s;box-shadow:0 4px 0 rgba(31,168,111,.4);}
+.bar-col .bl{font-weight:900;color:var(--muted);font-size:.78rem;}
+.bar-col .bv{font-weight:900;color:var(--ink-soft);font-size:.85rem;}
+.timer-box{display:flex;align-items:center;gap:14px;flex-wrap:wrap;}
+.timer-display{font-family:var(--display);font-weight:800;font-size:2.1rem;color:var(--sky-deep);min-width:96px;}
+.pill-btn{padding:13px 20px;border-radius:var(--r-pill);background:#F3EEFB;font-weight:900;color:var(--ink-soft);box-shadow:0 4px 0 #E3DAF3;}
+.pill-btn:active{transform:translateY(3px);box-shadow:0 1px 0 #E3DAF3;}
+.pill-btn.active{background:var(--sky);color:#fff;box-shadow:0 4px 0 var(--sky-deep);}
+
+/* ============================================================ PARENT */
+.tabs{display:flex;gap:10px;padding:6px 22px 14px;}
+.tab{flex:1;text-align:center;padding:15px;border-radius:var(--r-md);background:#fff;box-shadow:0 5px 0 #E3DAF3;font-weight:900;color:var(--ink-soft);transition:transform .1s, box-shadow .1s;}
+.tab:active{transform:translateY(3px);box-shadow:0 1px 0 #E3DAF3;}
+.tab.active{background:linear-gradient(160deg,#FF9A6B,#FF6F8E);color:#fff;box-shadow:0 5px 0 #d94f6f;}
+.pcard{display:flex;align-items:center;gap:14px;background:#fff;border-radius:var(--r-sm);padding:12px;margin-bottom:10px;box-shadow:var(--shadow-sm);}
+.pcard .pe{font-size:2rem;width:56px;text-align:center;}
+.pcard .pe img{width:50px;height:50px;border-radius:14px;object-fit:cover;}
+.pcard .pinfo{flex:1;}
+.pcard .pinfo b{font-weight:900;font-size:1.08rem;}
+.pcard .pinfo small{display:block;color:var(--muted);font-weight:800;}
+.pcard .pactions{display:flex;align-items:center;gap:8px;flex:0 0 auto;}
+.pcard .pm,
+.pcard .voice-btn{width:46px;height:46px;border-radius:15px;background:#F3EEFB;color:var(--ink-soft);font-size:1.35rem;display:grid;place-items:center;box-shadow:0 4px 0 #E3DAF3;}
+.pcard .pm:active,
+.pcard .voice-btn:active{transform:translateY(3px);box-shadow:0 1px 0 #E3DAF3;}
+.pcard .voice-btn.has{background:linear-gradient(160deg,#5BD0FF,#1E8FE0);color:#fff;box-shadow:0 4px 0 var(--sky-deep);}
+.toggle{display:flex;align-items:center;justify-content:space-between;padding:16px 4px;border-bottom:2px solid var(--line);}
+.toggle:last-child{border-bottom:none;}
+.toggle .tlbl{font-weight:900;}
+.toggle .tlbl small{display:block;color:var(--muted);font-weight:800;font-size:.85rem;margin-top:2px;}
+.switch{width:64px;height:38px;border-radius:var(--r-pill);background:#E3DAF3;position:relative;transition:background .2s;flex:0 0 auto;}
+.switch.on{background:var(--grass);}
+.switch::after{content:"";position:absolute;top:3px;left:3px;width:32px;height:32px;border-radius:50%;background:#fff;box-shadow:var(--shadow-sm);transition:left .2s;}
+.switch.on::after{left:29px;}
+.seg{display:flex;gap:8px;}
+.seg button{flex:1;padding:13px;border-radius:var(--r-sm);background:#F3EEFB;font-weight:900;color:var(--ink-soft);box-shadow:0 4px 0 #E3DAF3;transition:transform .1s, box-shadow .1s;}
+.seg button:active{transform:translateY(3px);box-shadow:0 1px 0 #E3DAF3;}
+.seg button.on{background:linear-gradient(160deg,#B79DFF,#7A45E8);color:#fff;box-shadow:0 4px 0 #6234c0;}
+.dangerbtn{width:100%;padding:17px;border-radius:var(--r-md);background:#fff;border:3px solid var(--bubble);color:var(--bubble-deep);font-weight:900;margin-top:10px;box-shadow:0 5px 0 #F6D6E6;}
+.dangerbtn:active{transform:translateY(3px);box-shadow:0 1px 0 #F6D6E6;}
+.addbtn{width:100%;padding:19px;border-radius:var(--r-md);background:linear-gradient(160deg,#5BE0A8,#1FA86F);color:#fff;font-weight:900;font-size:1.15rem;box-shadow:0 8px 0 var(--grass-deep);margin-bottom:16px;display:flex;align-items:center;justify-content:center;gap:10px;}
+.addbtn:active{transform:translateY(4px);box-shadow:0 2px 0 var(--grass-deep);}
+.reportbtn{width:100%;padding:19px;border-radius:var(--r-md);background:linear-gradient(160deg,#B79DFF,#7A45E8);color:#fff;font-weight:900;font-size:1.1rem;box-shadow:0 7px 0 #6234c0;display:flex;align-items:center;justify-content:center;gap:10px;}
+.reportbtn:active{transform:translateY(4px);box-shadow:0 2px 0 #6234c0;}
+.settings-input{width:100%;padding:16px;border-radius:var(--r-sm);border:3px solid var(--line);font-family:var(--body);font-weight:800;font-size:1.1rem;background:#fff;color:var(--ink);}
+.settings-input:focus{outline:none;border-color:var(--sky);}
+.word-chart-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px;}
+.word-chart-head h2{margin:0;}
+.word-chart-head .mini-report{flex:0 0 auto;width:auto;padding:13px 16px;font-size:.95rem;box-shadow:0 5px 0 #6234c0;}
+.word-kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px;}
+.word-kpi{border-radius:var(--r-sm);padding:14px 8px;text-align:center;color:#fff;}
+.word-kpi.good{background:linear-gradient(160deg,#5BE0A8,#1FA86F);}
+.word-kpi.watch{background:linear-gradient(160deg,#FF9DC0,#E84B92);}
+.word-kpi.total{background:linear-gradient(160deg,#5BD0FF,#1E8FE0);}
+.word-kpi .n{font-family:var(--display);font-weight:800;font-size:1.9rem;line-height:1;}
+.word-kpi .l{font-weight:900;font-size:.78rem;margin-top:5px;}
+.word-bars{display:flex;flex-direction:column;gap:11px;}
+.word-bar-row{display:grid;grid-template-columns:minmax(70px,112px) 1fr minmax(58px,auto);gap:10px;align-items:center;}
+.word-bar-label{font-weight:900;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.word-track{height:24px;background:#F3EEFB;border-radius:var(--r-pill);overflow:hidden;display:flex;box-shadow:inset 0 -3px 0 rgba(90,60,140,.08);}
+.word-seg-ok{background:linear-gradient(90deg,#5BE0A8,#1FA86F);}
+.word-seg-miss{background:linear-gradient(90deg,#FF9DC0,#E84B92);}
+.word-bar-meta{text-align:right;color:var(--ink-soft);font-weight:900;font-size:.82rem;}
+.word-legend{display:flex;gap:14px;flex-wrap:wrap;color:var(--ink-soft);font-weight:900;font-size:.84rem;margin-top:13px;}
+.word-legend span::before{content:"";display:inline-block;width:12px;height:12px;border-radius:50%;margin-right:6px;vertical-align:-1px;}
+.word-legend .ok::before{background:var(--grass);}
+.word-legend .miss::before{background:var(--bubble);}
+
+/* ---------- modal ---------- */
+.modal-back{position:absolute;inset:0;background:rgba(58,46,85,.5);backdrop-filter:blur(5px);display:none;align-items:center;justify-content:center;z-index:60;padding:24px;}
+.modal-back.open{display:flex;}
+.modal{width:100%;max-width:460px;background:linear-gradient(180deg,#F4ECFF,#FFF7EC);border-radius:var(--r-lg);padding:26px;box-shadow:var(--shadow-lg);max-height:92%;overflow-y:auto;animation:popin .25s cubic-bezier(.34,1.5,.5,1);}
+@keyframes popin{from{transform:scale(.9);opacity:0}to{transform:scale(1);opacity:1}}
+.modal h2{font-family:var(--display);font-weight:800;font-size:1.6rem;margin:0 0 6px;text-align:center;}
+.modal p.sub{text-align:center;color:var(--ink-soft);font-weight:800;margin:0 0 18px;}
+.field{margin-bottom:16px;}
+.field label{display:block;font-weight:900;margin-bottom:8px;font-size:.98rem;}
+.field input[type=text]{width:100%;padding:16px;border-radius:var(--r-sm);border:3px solid var(--line);font-family:var(--body);font-weight:800;font-size:1.1rem;background:#fff;color:var(--ink);}
+.field input:focus{outline:none;border-color:var(--sky);}
+.emoji-pick{display:flex;flex-wrap:wrap;gap:8px;max-height:150px;overflow-y:auto;padding:4px;}
+.emoji-pick button{width:52px;height:52px;border-radius:14px;background:#fff;font-size:1.7rem;box-shadow:var(--shadow-sm);}
+.emoji-pick button.sel{background:var(--sun);transform:scale(1.06);box-shadow:0 4px 0 var(--sun-deep);}
+.pickrow{display:flex;gap:10px;margin-bottom:14px;align-items:flex-end;}
+.pickrow .photo-prev{width:78px;height:78px;border-radius:18px;background:#F3EEFB;display:grid;place-items:center;font-size:2.4rem;overflow:hidden;flex:0 0 auto;}
+.pickrow .photo-prev img{width:100%;height:100%;object-fit:cover;}
+.gate-nums{display:flex;gap:18px;justify-content:center;margin:10px 0 6px;}
+.gate-num{width:100px;height:100px;border-radius:26px;background:#fff;box-shadow:0 7px 0 #E3DAF3;font-family:var(--display);font-weight:800;font-size:3.2rem;display:grid;place-items:center;color:var(--grape);}
+.gate-num:active{transform:translateY(4px);box-shadow:0 2px 0 #E3DAF3;}
+.voice-panel{background:#fff;border-radius:var(--r-md);padding:22px 18px;margin:16px 0;box-shadow:var(--shadow-sm);text-align:center;}
+.voice-word{font-family:var(--display);font-weight:800;font-size:2.2rem;line-height:1;color:var(--grape);}
+.voice-status{margin-top:8px;color:var(--ink-soft);font-weight:900;}
+.voice-status.recording{color:var(--coral-deep);}
+.voice-pulse{width:18px;height:18px;border-radius:50%;background:var(--coral);display:inline-block;margin-right:8px;vertical-align:-3px;animation:blink 1s steps(2) infinite;}
+
+/* ---------- reward layer ---------- */
+.reward-layer{position:absolute;inset:0;pointer-events:none;z-index:80;overflow:hidden;}
+.float{position:absolute;font-size:2.4rem;animation:floatup linear forwards;will-change:transform,opacity;}
+@keyframes floatup{0%{transform:translateY(0) scale(.4) rotate(0);opacity:0}15%{opacity:1}100%{transform:translateY(-120vh) scale(1.15) rotate(var(--spin));opacity:0}}
+.mascot-pop{position:absolute;left:50%;top:46%;width:200px;height:200px;transform:translate(-50%,-50%) scale(0);z-index:82;animation:mpop 1.4s cubic-bezier(.34,1.6,.5,1) forwards;}
+@keyframes mpop{0%{transform:translate(-50%,-50%) scale(0) rotate(-25deg)}35%{transform:translate(-50%,-50%) scale(1.15) rotate(10deg)}60%{transform:translate(-50%,-50%) scale(1) rotate(-4deg)}85%{transform:translate(-50%,-50%) scale(1) rotate(0);opacity:1}100%{transform:translate(-50%,-58%) scale(1);opacity:0}}
+
+/* ---------- toast ---------- */
+.toast{position:absolute;left:50%;bottom:40px;transform:translateX(-50%) translateY(140%);background:linear-gradient(160deg,#7A45E8,#9B6BFF);color:#fff;font-weight:900;padding:15px 26px;border-radius:var(--r-pill);box-shadow:var(--shadow-lg);z-index:90;transition:transform .3s cubic-bezier(.34,1.5,.5,1);max-width:88%;text-align:center;font-size:1.05rem;}
+.toast.show{transform:translateX(-50%) translateY(0);}
+
+@media (prefers-reduced-motion: reduce){
+  *{animation-duration:.001ms !important;animation-iteration-count:1 !important;transition-duration:.05ms !important;}
+}
+
+</style>
+</head>
+<body>
+<div class="app" id="app">
+
+  <div class="sky" aria-hidden="true">
+    <div class="sun"></div>
+    <div class="cloud c1"></div>
+    <div class="cloud c2"></div>
+    <div class="cloud c3"></div>
+  </div>
+
+  <!-- ================= HOME ================= -->
+  <section class="screen active" id="screen-home">
+    <div class="topbar">
+      <h1>Little Words</h1>
+      <div class="spacer"></div>
+      <button class="iconbtn" id="parentGate" aria-label="Parent area">⚙️</button>
+    </div>
+    <div class="home-head">
+      <div class="mascot" id="mascot"></div>
+      <div class="bubble" id="greeting">Hi there! 👋</div>
+    </div>
+    <div class="home-tiles">
+      <button class="tile tile-words" data-go="words">
+        <span class="tile-art" aria-hidden="true">
+          <svg viewBox="0 0 420 280" role="img">
+            <circle cx="342" cy="54" r="58" fill="#FFE680" opacity=".7"/>
+            <rect x="34" y="44" width="150" height="176" rx="28" fill="#fff" transform="rotate(-8 109 132)"/>
+            <rect x="58" y="70" width="98" height="86" rx="20" fill="#9B6BFF" transform="rotate(-8 107 113)"/>
+            <circle cx="107" cy="114" r="27" fill="#FFD23C"/>
+            <path d="M68 183 h78" stroke="#FF6F8E" stroke-width="15" stroke-linecap="round"/>
+            <rect x="248" y="51" width="118" height="142" rx="24" fill="#fff" transform="rotate(8 307 122)"/>
+            <rect x="270" y="76" width="74" height="65" rx="17" fill="#43B6FF" transform="rotate(8 307 108)"/>
+            <path d="M286 110 h42" stroke="#fff" stroke-width="11" stroke-linecap="round"/>
+            <path d="M190 210 c-28 0-50-22-50-50 c0-33 26-58 58-58 c32 0 58 25 58 58 c0 28-22 50-50 50z" fill="#FFD8B8"/>
+            <path d="M154 122 c18-44 84-43 102 0 c-31-10-69-10-102 0z" fill="#7A45E8"/>
+            <circle cx="180" cy="155" r="6" fill="#3A2E55"/>
+            <circle cx="218" cy="155" r="6" fill="#3A2E55"/>
+            <path d="M183 178 q17 14 35 0" fill="none" stroke="#3A2E55" stroke-width="6" stroke-linecap="round"/>
+            <path d="M141 224 c16-24 44-36 64-36 c26 0 50 13 66 36" fill="#5BD0FF"/>
+            <path d="M255 116 c38 0 67 24 67 53 c0 29-29 53-67 53 h-10 l-33 29 v-29 h-8 c-38 0-67-24-67-53 c0-29 29-53 67-53z" fill="#fff"/>
+            <path d="M215 153 h62 M215 178 h43" stroke="#FF6F8E" stroke-width="13" stroke-linecap="round"/>
+          </svg>
+        </span>
+        <span class="tlabel">Learn Words</span>
+        <span class="tdesc">Look, listen & say it</span>
+      </button>
+      <button class="tile tile-potty" data-go="potty">
+        <span class="tile-art" aria-hidden="true">
+          <svg viewBox="0 0 420 280" role="img">
+            <circle cx="82" cy="54" r="44" fill="#FFE680" opacity=".62"/>
+            <rect x="255" y="50" width="82" height="88" rx="24" fill="#fff"/>
+            <rect x="270" y="72" width="52" height="24" rx="12" fill="#5BD0FF"/>
+            <path d="M105 88 h155 c31 0 56 25 56 56 v6 c0 66-52 120-116 120 h-35 c-64 0-116-54-116-120 v-6 c0-31 25-56 56-56z" fill="#fff"/>
+            <path d="M97 122 h158 c20 0 36 16 36 36 c0 58-47 96-115 96 c-68 0-115-38-115-96 c0-20 16-36 36-36z" fill="#BFEAFF"/>
+            <ellipse cx="176" cy="153" rx="82" ry="43" fill="#fff"/>
+            <ellipse cx="176" cy="154" rx="48" ry="24" fill="#43B6FF" opacity=".42"/>
+            <path d="M90 252 h182" stroke="#3A2E55" stroke-width="18" opacity=".2" stroke-linecap="round"/>
+            <circle cx="330" cy="120" r="39" fill="#FFD8B8"/>
+            <path d="M296 102 c14-33 58-35 75-3 c-20-5-49-2-75 3z" fill="#7A45E8"/>
+            <circle cx="316" cy="124" r="5" fill="#3A2E55"/>
+            <circle cx="345" cy="124" r="5" fill="#3A2E55"/>
+            <path d="M318 141 q13 11 27 0" fill="none" stroke="#3A2E55" stroke-width="5" stroke-linecap="round"/>
+            <path d="M288 208 c7-30 27-52 47-52 c24 0 44 23 50 52z" fill="#FFD23C"/>
+            <path d="M282 208 h108" stroke="#fff" stroke-width="20" stroke-linecap="round" opacity=".96"/>
+            <path d="M313 184 l-24 38 M354 184 l26 38" stroke="#FFD8B8" stroke-width="16" stroke-linecap="round"/>
+            <path d="M324 228 l-15 25 M366 228 l18 24" stroke="#6E5F8C" stroke-width="12" stroke-linecap="round"/>
+            <path d="M335 35 l10 20 l22 3 l-16 15 l4 22 l-20-10 l-19 10 l4-22 l-16-15 l22-3z" fill="#FFD23C" stroke="#F2A615" stroke-width="5" stroke-linejoin="round"/>
+          </svg>
+        </span>
+        <span class="tlabel">Potty Time</span>
+        <span class="tdesc">Track & celebrate</span>
+      </button>
+    </div>
+  </section>
+
+  <!-- ================= FLASHCARDS ================= -->
+  <section class="screen" id="screen-words">
+    <div class="topbar">
+      <button class="iconbtn" data-go="home" aria-label="Home">🏠</button>
+      <h1>Words</h1>
+      <div class="spacer"></div>
+      <button class="iconbtn" id="favFilter" aria-label="Show favourites">⭐</button>
+    </div>
+    <div class="cat-strip" id="catStrip"></div>
+    <div class="card-stage">
+      <div class="flashcard" id="flashcard">
+        <span class="recbadge" id="recBadge" style="display:none">🎬 <span id="recCount">0</span></span>
+        <button class="fav-star" id="favStar" aria-label="Favourite">⭐</button>
+        <span class="pic" id="cardPic">🐶</span>
+      </div>
+      <div class="word" id="cardWord">Dog</div>
+      <div class="dots" id="dots"></div>
+    </div>
+    <div class="actions">
+      <button class="bigbtn nav" id="prevBtn" aria-label="Previous">‹</button>
+      <button class="bigbtn hear" id="hearBtn" aria-label="Replay word">🔊</button>
+      <button class="bigbtn rec" id="recBtn" aria-label="Record">🎬</button>
+      <button class="bigbtn nav" id="nextBtn" aria-label="Next">›</button>
+    </div>
+  </section>
+
+  <!-- ================= POTTY ================= -->
+  <section class="screen" id="screen-potty">
+    <div class="topbar">
+      <button class="iconbtn" data-go="home" aria-label="Home">🏠</button>
+      <h1>Potty Time</h1>
+      <div class="spacer"></div>
+      <button class="iconbtn" id="pottyStatsBtn" aria-label="Parent stats">📊</button>
+    </div>
+    <div class="scroll">
+      <div class="section">
+        <h2>Tap when it happens</h2>
+        <div class="potty-grid" id="pottyGrid">
+          <button class="potty-btn p-pee"  data-log="pee"><span class="pe">💧</span>Pee</button>
+          <button class="potty-btn p-poop" data-log="poop"><span class="pe">💩</span>Poop</button>
+          <button class="potty-btn p-both" data-log="both"><span class="pe">⭐</span>Both!</button>
+          <button class="potty-btn p-try"  data-log="try"><span class="pe">🪑</span>Sat & tried</button>
+          <button class="potty-btn p-dry"  data-log="dry"><span class="pe">✅</span>Stayed dry</button>
+          <button class="potty-btn p-acc"  data-log="accident"><span class="pe">💦</span>Accident</button>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2>Star chart ⭐</h2>
+        <div class="sticker-row" id="stickerRow"></div>
+        <div class="goal-note" id="goalNote">Earn 5 stars for a big surprise!</div>
+      </div>
+
+      <div class="section">
+        <h2>Today</h2>
+        <div class="timeline" id="pottyTimeline"><div class="empty">No potty logs yet today 🌱</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= PARENT ================= -->
+  <section class="screen" id="screen-parent">
+    <div class="topbar">
+      <button class="iconbtn" data-go="home" aria-label="Home">🏠</button>
+      <h1>Parents</h1>
+    </div>
+    <div class="tabs">
+      <button class="tab active" data-tab="cards">Cards</button>
+      <button class="tab" data-tab="wordprogress">Words</button>
+      <button class="tab" data-tab="pottystats">Potty</button>
+      <button class="tab" data-tab="settings">Settings</button>
+    </div>
+    <div class="scroll">
+      <!-- CARDS TAB -->
+      <div id="tab-cards">
+        <button class="addbtn" id="addCardBtn">➕ Add a new card</button>
+        <div id="cardManageList"></div>
+      </div>
+      <!-- WORD PROGRESS TAB -->
+      <div id="tab-wordprogress" style="display:none">
+        <div class="section" id="wordStatsPanel"></div>
+        <button class="reportbtn" id="wordReportBtn" style="margin-bottom:16px">📄 Create progress report</button>
+        <button class="dangerbtn" id="resetWordProgress">Refresh word progress</button>
+      </div>
+      <!-- POTTY STATS TAB -->
+      <div id="tab-pottystats" style="display:none">
+        <div class="section">
+          <h2>This week</h2>
+          <div class="stat-row" id="pottyStats"></div>
+        </div>
+        <div class="section">
+          <h2>Successes (last 7 days)</h2>
+          <div class="bars" id="pottyBars"></div>
+        </div>
+        <div class="section">
+          <h2>Reminder timer</h2>
+          <div class="timer-box">
+            <div class="timer-display" id="timerDisplay">--:--</div>
+            <button class="pill-btn" data-timer="30">30 min</button>
+            <button class="pill-btn" data-timer="45">45 min</button>
+            <button class="pill-btn" data-timer="60">60 min</button>
+            <button class="pill-btn" id="timerStop">Stop</button>
+          </div>
+          <div class="hint" style="text-align:left;margin-top:10px">A gentle alarm sounds when the timer ends, so you remember to offer a potty break.</div>
+        </div>
+      </div>
+      <!-- SETTINGS TAB -->
+      <div id="tab-settings" style="display:none">
+        <div class="section">
+          <h2>Child's name</h2>
+          <input type="text" id="childName" placeholder="e.g. Leo" class="settings-input">
+        </div>
+        <div class="section">
+          <h2>Share progress 📄</h2>
+          <div class="hint" style="text-align:left;margin:0 0 14px">Make a friendly one-page PDF summary of words and potty progress to send to your co-parent, family, or therapist.</div>
+          <button class="reportbtn" id="reportBtn">📄 Create progress report</button>
+        </div>
+        <div class="section">
+          <h2>Celebrations</h2>
+          <div class="toggle">
+            <div class="tlbl">Sounds<small>Gentle chimes & spoken words</small></div>
+            <div class="switch on" id="sw-sound"></div>
+          </div>
+          <div class="toggle" style="border-bottom:none">
+            <div class="tlbl">Reward intensity<small>Keep it calm or make it a party</small></div>
+          </div>
+          <div class="seg" id="seg-intensity">
+            <button data-int="calm">😌 Calm</button>
+            <button data-int="normal" class="on">😀 Normal</button>
+            <button data-int="extra">🎉 Extra</button>
+          </div>
+        </div>
+        <div class="section">
+          <h2>Voice speed</h2>
+          <div class="seg" id="seg-speed">
+            <button data-spd="0.7">🐢 Slow</button>
+            <button data-spd="0.85" class="on">Medium</button>
+            <button data-spd="1">Normal</button>
+          </div>
+        </div>
+        <div class="section">
+          <h2>Flashcard voice</h2>
+          <div class="toggle">
+            <div class="tlbl">Use parent voice first<small>Record voices from the Cards tab</small></div>
+            <div class="switch on" id="sw-parentVoice"></div>
+          </div>
+        </div>
+        <div class="section">
+          <h2>Star chart goal</h2>
+          <div class="seg" id="seg-goal">
+            <button data-goal="3">3 stars</button>
+            <button data-goal="5" class="on">5 stars</button>
+            <button data-goal="10">10 stars</button>
+          </div>
+        </div>
+        <div class="section">
+          <h2>Privacy & data</h2>
+          <div class="hint" style="text-align:left;margin:0 0 14px">Recordings, parent voices, and generated voice cache stay on this iPad. New generated voice audio is requested through your private server proxy.</div>
+          <button class="dangerbtn" id="exportBtn" style="border-color:var(--sky-deep);color:var(--sky-deep)">⬇️ Save a backup file</button>
+          <button class="dangerbtn" id="resetPotty">Clear potty history</button>
+          <button class="dangerbtn" id="resetAll">Erase everything</button>
+        </div>
+        <div class="hint">Little Words · made with care 💛</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= RECORDING SHEET ================= -->
+  <div class="sheet-back" id="recSheet">
+    <div class="sheet">
+      <div class="sheet-grab"></div>
+      <h2 id="recTitle">Say the word!</h2>
+      <div class="target">Listening for <b id="recTarget">dog</b></div>
+      <div class="preview-wrap">
+        <video id="preview" autoplay muted playsinline></video>
+        <div class="rec-pip" id="recPip"><span class="blink"></span> REC <span id="recTime">0:00</span></div>
+        <div class="listening" id="listenPip"><span class="ear">👂</span> Listening</div>
+        <div class="miniword" id="recMiniWord">dog</div>
+        <div class="miniemoji" id="recMiniEmoji">🐶</div>
+      </div>
+      <div class="sheet-row" id="recControls">
+        <button class="btn btn-rec btn-wide" id="startRec">🎬 Start recording</button>
+      </div>
+      <div class="hint" id="recHint">Tap start, then help them say the word. I’ll stop on my own when I hear it — or tap stop anytime.</div>
+      <div class="saved-list" id="savedList"></div>
+      <div class="sheet-row"><button class="btn btn-ghost btn-wide" id="closeRec">Done</button></div>
+    </div>
+  </div>
+
+  <!-- ================= GENERIC MODAL ================= -->
+  <div class="modal-back" id="modalBack"><div class="modal" id="modalBox"></div></div>
+
+  <!-- ================= REWARD + TOAST ================= -->
+  <div class="reward-layer" id="rewardLayer"></div>
+  <div class="toast" id="toast"></div>
+</div>
+<script>
+/* ============================================================
+   LITTLE WORDS — app logic (vanilla JS, single file, offline)
+   ============================================================ */
+const $  = (s,el=document)=>el.querySelector(s);
+const $$ = (s,el=document)=>[...el.querySelectorAll(s)];
+const HTML_ESC = {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'};
+function esc(v){ return String(v??'').replace(/[&<>"']/g,ch=>HTML_ESC[ch]); }
+
+/* ---------- tiny IndexedDB layer ---------- */
+const DB = (()=>{
+  let dbp;
+  function open(){
+    if(dbp) return dbp;
+    dbp = new Promise((res,rej)=>{
+      const r = indexedDB.open('littlewords',3);
+      r.onupgradeneeded = e=>{
+        const db = e.target.result;
+        if(!db.objectStoreNames.contains('kv'))   db.createObjectStore('kv');
+        if(!db.objectStoreNames.contains('cards'))      db.createObjectStore('cards',{keyPath:'id'});
+        if(!db.objectStoreNames.contains('recordings')) db.createObjectStore('recordings',{keyPath:'id'});
+        if(!db.objectStoreNames.contains('voices'))     db.createObjectStore('voices',{keyPath:'cardId'});
+        if(!db.objectStoreNames.contains('ttsAudio'))   db.createObjectStore('ttsAudio',{keyPath:'key'});
+        if(!db.objectStoreNames.contains('potty'))       db.createObjectStore('potty',{keyPath:'id'});
+      };
+      r.onsuccess = ()=>res(r.result);
+      r.onerror   = ()=>rej(r.error);
+    });
+    return dbp;
+  }
+  async function tx(store,mode){ const db=await open(); return db.transaction(store,mode).objectStore(store); }
+  return {
+    async get(store,key){ const s=await tx(store,'readonly'); return new Promise(r=>{const q=s.get(key);q.onsuccess=()=>r(q.result);q.onerror=()=>r(undefined);}); },
+    async all(store){ const s=await tx(store,'readonly'); return new Promise(r=>{const q=s.getAll();q.onsuccess=()=>r(q.result||[]);q.onerror=()=>r([]);}); },
+    async put(store,val,key){ const s=await tx(store,'readwrite'); return new Promise((res,rej)=>{const q=key!==undefined?s.put(val,key):s.put(val);q.onsuccess=()=>res(true);q.onerror=()=>rej(q.error);}); },
+    async del(store,key){ const s=await tx(store,'readwrite'); return new Promise(res=>{const q=s.delete(key);q.onsuccess=()=>res(true);q.onerror=()=>res(false);}); },
+    async clear(store){ const s=await tx(store,'readwrite'); return new Promise(res=>{const q=s.clear();q.onsuccess=()=>res(true);q.onerror=()=>res(false);}); },
+  };
+})();
+
+/* ---------- default flashcards ---------- */
+const DEFAULT_CATS = [
+  {id:'needs',  name:'Needs',   icon:'🙌'},
+  {id:'animals',name:'Animals', icon:'🐶'},
+  {id:'food',   name:'Food',    icon:'🍎'},
+  {id:'family', name:'Family',  icon:'👨‍👩‍👧'},
+  {id:'body',   name:'Body',    icon:'👀'},
+  {id:'things', name:'Things',  icon:'⚽'},
+  {id:'go',     name:'Go!',     icon:'🚗'},
+  {id:'colors', name:'Colors',  icon:'🌈'},
+];
+const CAT_COLORS={
+  needs:['#9B6BFF','#7A45E8','#EFE7FF'],
+  animals:['#FF9F45','#E87E1E','#FFEFD8'],
+  food:['#FF6B81','#E84B63','#FFE3E8'],
+  family:['#43B6FF','#1E8FE0','#DBF0FF'],
+  body:['#FF74B1','#E84B92','#FFE1EF'],
+  things:['#3DCB8F','#1FA86F','#DBF7EC'],
+  go:['#FFC83C','#F2A615','#FFF3D2'],
+  colors:['#5FD27A','#34B358','#E1F8E4'],
+};
+function catColor(id){ return CAT_COLORS[id]||['#43B6FF','#1E8FE0','#DBF0FF']; }
+
+const DEFAULT_CARDS = [
+  // Needs / core AAC words first — most useful for a non-verbal child
+  ['needs','More','🤲'],['needs','Eat','🍽️'],['needs','Drink','🥤'],['needs','Help','🆘'],
+  ['needs','Yes','👍'],['needs','No','👎'],['needs','Potty','🚽'],['needs','Hug','🤗'],
+  ['needs','Play','🧸'],['needs','Sleep','😴'],['needs','All done','🛑'],['needs','Hurt','🤕'],
+  ['needs','Happy','😊'],['needs','Sad','😢'],
+  // Animals
+  ['animals','Dog','🐶'],['animals','Cat','🐱'],['animals','Cow','🐮'],['animals','Duck','🦆'],
+  ['animals','Fish','🐟'],['animals','Bird','🐦'],['animals','Horse','🐴'],['animals','Pig','🐷'],
+  ['animals','Bear','🐻'],['animals','Frog','🐸'],['animals','Bee','🐝'],['animals','Sheep','🐑'],
+  ['animals','Rabbit','🐰'],['animals','Lion','🦁'],['animals','Elephant','🐘'],
+  // Food
+  ['food','Apple','🍎'],['food','Banana','🍌'],['food','Milk','🥛'],['food','Water','💧'],
+  ['food','Bread','🍞'],['food','Egg','🥚'],['food','Cookie','🍪'],['food','Cheese','🧀'],
+  ['food','Juice','🧃'],['food','Grapes','🍇'],['food','Carrot','🥕'],['food','Cake','🎂'],
+  // Family
+  ['family','Mama','👩'],['family','Dada','👨'],['family','Baby','👶'],['family','Grandma','👵'],
+  ['family','Grandpa','👴'],['family','Me','🧒'],
+  // Body
+  ['body','Eyes','👀'],['body','Nose','👃'],['body','Mouth','👄'],['body','Ear','👂'],
+  ['body','Hand','✋'],['body','Foot','🦶'],['body','Hair','💇'],['body','Teeth','🦷'],
+  // Things
+  ['things','Ball','⚽'],['things','Book','📖'],['things','Cup','☕'],['things','Shoe','👟'],
+  ['things','Hat','🧢'],['things','Bed','🛏️'],['things','Spoon','🥄'],['things','Brush','🪥'],
+  ['things','Phone','📱'],['things','Bath','🛁'],['things','Star','⭐'],['things','Sun','☀️'],
+  // Go / vehicles
+  ['go','Car','🚗'],['go','Bus','🚌'],['go','Truck','🚚'],['go','Train','🚂'],
+  ['go','Plane','✈️'],['go','Boat','⛵'],['go','Bike','🚲'],
+  // Colors
+  ['colors','Red','🔴'],['colors','Blue','🔵'],['colors','Green','🟢'],['colors','Yellow','🟡'],
+  ['colors','Orange','🟠'],['colors','Purple','🟣'],
+];
+
+/* ---------- state ---------- */
+const state = {
+  settings:{
+    name:'', sound:true, intensity:'normal', speed:0.85, goal:5, preferParentVoice:true,
+    favs:[], stars:0, stardate:'', progress:{}
+  },
+  cards:[],
+  voiceCache:new Map(),
+  cat:'needs', idx:0, favOnly:false,
+  recording:null, // {cardId}
+};
+
+/* ---------- sounds (Web Audio, generated, fully offline) ---------- */
+const Sound = (()=>{
+  let ctx;
+  function ac(){ if(!ctx) ctx = new (window.AudioContext||window.webkitAudioContext)(); if(ctx.state==='suspended') ctx.resume(); return ctx; }
+  function tone(freq,start,dur,gain=0.16,type='sine'){
+    const c=ac(); const o=c.createOscillator(); const g=c.createGain();
+    o.type=type; o.frequency.value=freq; o.connect(g); g.connect(c.destination);
+    const t=c.currentTime+start;
+    g.gain.setValueAtTime(0,t);
+    g.gain.linearRampToValueAtTime(gain,t+0.03);
+    g.gain.exponentialRampToValueAtTime(0.0001,t+dur);
+    o.start(t); o.stop(t+dur+0.05);
+  }
+  return {
+    tap(){ if(!state.settings.sound)return; tone(520,0,0.12,0.06,'triangle'); },
+    success(){
+      if(!state.settings.sound)return;
+      const notes=[523.25,659.25,783.99,1046.5]; // C5 E5 G5 C6
+      const n = state.settings.intensity==='calm'?3:4;
+      notes.slice(0,n).forEach((f,i)=>tone(f,i*0.12,0.5,0.16,'sine'));
+      if(state.settings.intensity==='extra'){ tone(1318.5,0.5,0.6,0.12); }
+    },
+    chime(){ if(!state.settings.sound)return; tone(659.25,0,0.4,0.12); tone(987.77,0.12,0.5,0.1); },
+    star(){ if(!state.settings.sound)return; tone(784,0,0.18,0.12); tone(1046.5,0.1,0.3,0.12); },
+    alarm(){ tone(660,0,0.3,0.2,'triangle'); tone(660,0.45,0.3,0.2,'triangle'); tone(880,0.9,0.5,0.2,'triangle'); },
+    unlock(){ try{ ac(); }catch(e){} }
+  };
+})();
+
+/* ---------- speech + parent voice playback ---------- */
+// ElevenLabs TTS is requested through a backend proxy so the API key is never
+// exposed in this frontend file. Configure the key, voice, model, and voice
+// settings in server.js / environment variables.
+const ELEVENLABS_TTS_ENDPOINT='/api/tts';
+let preferredVoice=null, activeWordAudio=null, activeWordUrl='';
+function refreshVoices(){
+  if(!('speechSynthesis' in window)) return;
+  const voices=speechSynthesis.getVoices();
+  if(!voices.length) return;
+  preferredVoice=voices
+    .map(v=>{
+      const hay=(v.name+' '+v.voiceURI).toLowerCase();
+      let score=/^en[-_]/i.test(v.lang)?10:0;
+      if(/^en[-_]us$/i.test(v.lang)) score+=4;
+      if(v.localService) score+=1;
+      ['premium','enhanced','neural','natural','samantha','ava','allison','nicky','serena','karen','victoria','susan','daniel'].forEach((n,i)=>{
+        if(hay.includes(n)) score+=18-i;
+      });
+      if(hay.includes('compact')) score-=8;
+      if(hay.includes('robot')) score-=8;
+      return {v,score};
+    })
+    .sort((a,b)=>b.score-a.score)[0].v;
+  return preferredVoice;
+}
+if('speechSynthesis' in window){
+  refreshVoices();
+  speechSynthesis.onvoiceschanged=refreshVoices;
+}
+function normalizeTTSKey(text){
+  return String(text||'').trim().replace(/\s+/g,' ').toLowerCase();
+}
+async function getCachedElevenAudio(text){
+  const key=normalizeTTSKey(text);
+  if(!key) return null;
+  const cached=await DB.get('ttsAudio',key);
+  return cached&&cached.blob?cached:null;
+}
+async function ensureElevenAudio(text){
+  const clean=String(text||'').trim().replace(/\s+/g,' ');
+  const key=normalizeTTSKey(clean);
+  if(!key) return null;
+  const cached=await DB.get('ttsAudio',key);
+  if(cached&&cached.blob) return cached;
+  const res=await fetch(ELEVENLABS_TTS_ENDPOINT,{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({text:clean,key})
+  });
+  if(!res.ok) throw new Error('ElevenLabs TTS failed');
+  const blob=await res.blob();
+  if(!blob||blob.size<200) throw new Error('Empty ElevenLabs audio');
+  const rec={key,text:clean,blob,type:blob.type||'audio/mpeg',ts:Date.now()};
+  await DB.put('ttsAudio',rec);
+  return rec;
+}
+function browserSpeak(text,opts={}){
+  const done=()=>{ if(opts.onDone) setTimeout(opts.onDone, opts.afterMs??120); };
+  if(!state.settings.sound || !('speechSynthesis' in window)){ done(); return; }
+  try{
+    stopWordAudio();
+    speechSynthesis.cancel();
+    const u=new SpeechSynthesisUtterance(text);
+    const voice=preferredVoice||refreshVoices()||preferredVoice;
+    if(voice) u.voice=voice;
+    u.rate=Math.max(0.65,Math.min(1.05,+state.settings.speed||0.85));
+    u.pitch=0.98; u.volume=1; u.lang=(voice&&voice.lang)||'en-US';
+    let settled=false;
+    const finish=()=>{ if(settled) return; settled=true; done(); };
+    u.onend=finish; u.onerror=finish;
+    speechSynthesis.speak(u);
+  }catch(e){ done(); }
+}
+async function speak(text,opts={}){
+  const done=()=>{ if(opts.onDone) setTimeout(opts.onDone, opts.afterMs??120); };
+  if(!state.settings.sound){ done(); return; }
+  try{
+    const cached=await getCachedElevenAudio(text);
+    const audio=cached||await ensureElevenAudio(text);
+    playAudioBlob(audio.blob,()=>browserSpeak(text,opts),opts.onDone);
+  }catch(e){
+    browserSpeak(text,opts);
+  }
+}
+async function loadVoiceCache(){
+  const voices=await DB.all('voices');
+  state.voiceCache=new Map(voices.map(v=>[v.cardId,v]));
+}
+function stopWordAudio(){
+  if(activeWordAudio){
+    activeWordAudio.pause();
+    activeWordAudio.onended=null;
+    activeWordAudio.onerror=null;
+    activeWordAudio=null;
+  }
+  if(activeWordUrl){ URL.revokeObjectURL(activeWordUrl); activeWordUrl=''; }
+}
+function playAudioBlob(blob,onFail,onDone){
+  stopWordAudio();
+  let settled=false;
+  const done=()=>{ if(settled) return; settled=true; if(onDone) setTimeout(onDone,120); };
+  const fail=()=>{ if(settled) return; settled=true; stopWordAudio(); onFail&&onFail(); };
+  activeWordUrl=URL.createObjectURL(blob);
+  activeWordAudio=new Audio(activeWordUrl);
+  activeWordAudio.onended=()=>{ stopWordAudio(); done(); };
+  activeWordAudio.onerror=fail;
+  const p=activeWordAudio.play();
+  if(p&&p.catch) p.catch(fail);
+}
+function playCardVoice(card,opts={}){
+  if(!card){ opts.onDone&&opts.onDone(); return; }
+  if(!state.settings.sound){ opts.onDone&&opts.onDone(); return; }
+  const saved=state.settings.preferParentVoice!==false && state.voiceCache.get(card.id);
+  if(saved&&saved.blob){ playAudioBlob(saved.blob,()=>speak(card.word,opts),opts.onDone); }
+  else speak(card.word,opts);
+}
+
+/* ---------- reward effects ---------- */
+const FLOATS=['⭐','🌟','💛','🎈','🫧','🌈','✨','🦋'];
+function celebrate(big=true){
+  Sound.success();
+  const layer=$('#rewardLayer');
+  if(big){
+    const mp=document.createElement('div'); mp.className='mascot-pop';
+    mp.innerHTML=mascotSVG('c'+Date.now());
+    layer.appendChild(mp); setTimeout(()=>mp.remove(),1500);
+  }
+  const counts={calm:5,normal:11,extra:22};
+  const n=counts[state.settings.intensity]||11;
+  for(let i=0;i<n;i++){
+    const f=document.createElement('div'); f.className='float';
+    f.textContent=FLOATS[(Math.random()*FLOATS.length)|0];
+    f.style.left=(Math.random()*100)+'%';
+    f.style.bottom='-40px';
+    f.style.fontSize=(1.6+Math.random()*1.8)+'rem';
+    f.style.setProperty('--spin',((Math.random()*120-60)|0)+'deg');
+    f.style.animationDuration=(2.4+Math.random()*1.6)+'s';
+    f.style.animationDelay=(Math.random()*0.4)+'s';
+    layer.appendChild(f); setTimeout(()=>f.remove(),4500);
+  }
+}
+let toastT;
+function toast(msg){
+  const t=$('#toast'); t.textContent=msg; t.classList.add('show');
+  clearTimeout(toastT); toastT=setTimeout(()=>t.classList.remove('show'),2200);
+}
+
+/* ---------- navigation ---------- */
+function go(name){
+  $$('.screen').forEach(s=>s.classList.remove('active'));
+  $('#screen-'+name).classList.add('active');
+  if(name==='words')  renderCards({autoSpeak:true});
+  if(name==='potty')  renderPotty();
+  if(name==='parent') renderParent();
+}
+$$('[data-go]').forEach(b=>b.addEventListener('click',()=>{Sound.unlock();Sound.tap();go(b.dataset.go);}));
+
+/* ============================================================
+   FLASHCARDS
+   ============================================================ */
+function visibleCards(){
+  let list=state.cards.filter(c=>c.cat===state.cat);
+  if(state.favOnly) list=state.cards.filter(c=>state.settings.favs.includes(c.id));
+  return list;
+}
+function renderCatStrip(){
+  const strip=$('#catStrip'); strip.innerHTML='';
+  DEFAULT_CATS.forEach(cat=>{
+    const has=state.cards.some(c=>c.cat===cat.id);
+    if(!has) return;
+    const b=document.createElement('button');
+    b.className='chip'+(!state.favOnly && state.cat===cat.id?' active':'');
+    const [cv,cd]=catColor(cat.id);
+    b.style.setProperty('--cv',cv); b.style.setProperty('--cd',cd);
+    b.innerHTML=`<span class="e">${cat.icon}</span>${cat.name}`;
+    b.onclick=()=>{ Sound.tap(); state.favOnly=false; state.cat=cat.id; state.idx=0; renderCards({autoSpeak:true}); };
+    strip.appendChild(b);
+  });
+}
+let autoSpeakTimer;
+function autoSpeakCard(card){
+  clearTimeout(autoSpeakTimer);
+  autoSpeakTimer=setTimeout(()=>{
+    if(!$('#screen-words').classList.contains('active')) return;
+    if(visibleCards()[state.idx]?.id!==card.id) return;
+    playCardVoice(card);
+  },260);
+}
+function renderCards(opts={}){
+  renderCatStrip();
+  const list=visibleCards();
+  const fc=$('#flashcard');
+  if(list.length===0){
+    $('#cardPic').textContent = state.favOnly?'⭐':'📭';
+    $('#cardWord').textContent = state.favOnly?'No favourites yet':'No cards';
+    $('#dots').innerHTML=''; $('#recBadge').style.display='none';
+    $('#favStar').style.display='none';
+    return;
+  }
+  $('#favStar').style.display='';
+  if(state.idx>=list.length) state.idx=0;
+  const card=list[state.idx];
+  const [cv,cd,ct]=catColor(card.cat);
+  const stage=$('.card-stage');
+  stage.style.setProperty('--cv',cv); stage.style.setProperty('--cd',cd); stage.style.setProperty('--ct',ct);
+  // picture (emoji or saved photo)
+  const pic=$('#cardPic');
+  if(card.photo){ pic.innerHTML=`<img class="photo" src="${card.photo}" alt="">`; }
+  else pic.textContent=card.emoji;
+  $('#cardWord').textContent=card.word;
+  // fav state
+  $('#favStar').classList.toggle('on',state.settings.favs.includes(card.id));
+  // recordings badge
+  countRecordings(card.id).then(n=>{
+    if(visibleCards()[state.idx]?.id!==card.id) return;
+    $('#recBadge').style.display=n>0?'flex':'none';
+    $('#recCount').textContent=n;
+  });
+  // dots
+  const dots=$('#dots'); dots.innerHTML='';
+  list.forEach((_,i)=>{const d=document.createElement('div');d.className='dot'+(i===state.idx?' on':'');dots.appendChild(d);});
+  if(opts.autoSpeak) autoSpeakCard(card);
+}
+async function countRecordings(cardId){
+  const all=await DB.all('recordings'); return all.filter(r=>r.cardId===cardId).length;
+}
+function nav(dir){
+  const list=visibleCards(); if(!list.length)return;
+  Sound.tap();
+  state.idx=(state.idx+dir+list.length)%list.length;
+  const fc=$('#flashcard'); fc.style.transform='scale(.94)';
+  setTimeout(()=>fc.style.transform='',120);
+  renderCards({autoSpeak:true});
+}
+$('#prevBtn').onclick=()=>nav(-1);
+$('#nextBtn').onclick=()=>nav(1);
+$('#hearBtn').onclick=()=>{ const c=visibleCards()[state.idx]; if(c){Sound.unlock();$('#flashcard').style.transform='scale(1.03)';setTimeout(()=>$('#flashcard').style.transform='',180);playCardVoice(c);} };
+$('#flashcard').onclick=(e)=>{ if(e.target.closest('#favStar'))return; const c=visibleCards()[state.idx]; if(c){Sound.unlock();playCardVoice(c);} };
+$('#favStar').onclick=async(e)=>{
+  e.stopPropagation();
+  const c=visibleCards()[state.idx]; if(!c)return;
+  const i=state.settings.favs.indexOf(c.id);
+  if(i>=0) state.settings.favs.splice(i,1); else {state.settings.favs.push(c.id);Sound.star();}
+  await saveSettings(); renderCards();
+};
+$('#favFilter').onclick=()=>{ Sound.tap(); state.favOnly=!state.favOnly; state.idx=0;
+  $('#favFilter').style.transform=state.favOnly?'scale(1.1)':''; renderCards({autoSpeak:true}); };
+
+/* ============================================================
+   RECORDING  (camera + mic + auto-stop on word)
+   ============================================================ */
+const Rec = (()=>{
+  let stream, mediaRec, chunks=[], recog, autoTimer, tickTimer, startTs, currentCard, gotWord=false, promptToken=0;
+
+  function supportedMime(){
+    const opts=['video/mp4','video/webm;codecs=vp9,opus','video/webm;codecs=vp8,opus','video/webm'];
+    for(const m of opts){ if(window.MediaRecorder&&MediaRecorder.isTypeSupported(m)) return m; }
+    return '';
+  }
+  async function openCamera(card){
+    currentCard=card; gotWord=false; promptToken++;
+    $('#recTarget').textContent=card.word.toLowerCase();
+    $('#recMiniWord').textContent=card.word;
+    $('#recMiniEmoji').innerHTML=card.photo?`<img src="${card.photo}" alt="">`:esc(card.emoji);
+    $('#recTitle').textContent='Say “'+card.word+'”!';
+    resetControls();
+    await renderSaved(card.id);
+    $('#recSheet').classList.add('open');
+    const v=$('#preview'); v.classList.remove('playback'); v.muted=true; v.removeAttribute('controls'); v.srcObject=null;
+    try{
+      stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:'user',width:{ideal:1280}},audio:true});
+      v.srcObject=stream; v.play().catch(()=>{});
+      cueRecording(promptToken);
+    }catch(err){
+      $('#recHint').innerHTML='⚠️ Camera/microphone blocked. In Safari, tap <b>AA</b> in the address bar → Website Settings → allow Camera & Microphone. You can still use the saved recordings below.';
+      $('#recControls').innerHTML='<button class="btn btn-rec btn-wide" id="retryCamera">🎬 Try camera again</button>';
+      $('#retryCamera').onclick=()=>openCamera(card);
+    }
+  }
+  function resetControls(){
+    $('#recControls').innerHTML='<button class="btn btn-rec btn-wide" id="startRec">🔊 Replay word, then record</button>';
+    $('#startRec').onclick=()=>cueRecording(++promptToken);
+    $('#recPip').classList.remove('on'); $('#listenPip').classList.remove('on');
+    $('#recHint').textContent='I’ll say the word first. Recording starts automatically when the word finishes.';
+  }
+  function cueRecording(token=++promptToken){
+    if(!stream){ toast('Camera not ready'); return; }
+    if(mediaRec&&mediaRec.state==='recording') return;
+    $('#recControls').innerHTML='<button class="btn btn-ghost btn-wide" id="replayBeforeRec">🔊 Replay word</button>';
+    $('#replayBeforeRec').onclick=()=>cueRecording(++promptToken);
+    $('#recHint').textContent='Listen to the word. Recording starts right after it finishes.';
+    playCardVoice(currentCard,{onDone:()=>{
+      if(token!==promptToken) return;
+      if(!stream || !$('#recSheet').classList.contains('open')) return;
+      start();
+    }});
+  }
+  function start(){
+    if(!stream){ toast('Camera not ready'); return; }
+    if(mediaRec&&mediaRec.state==='recording') return;
+    Sound.unlock(); chunks=[]; gotWord=false; startTs=Date.now();
+    $('#recTime').textContent='0:00';
+    const mime=supportedMime();
+    try{ mediaRec=new MediaRecorder(stream, mime?{mimeType:mime}:undefined); }
+    catch(e){ mediaRec=new MediaRecorder(stream); }
+    mediaRec.ondataavailable=e=>{ if(e.data&&e.data.size) chunks.push(e.data); };
+    mediaRec.onstop=finish;
+    mediaRec.start();
+    $('#recPip').classList.add('on');
+    $('#recControls').innerHTML='<button class="btn btn-stop" id="stopRec">⏹ Stop</button><button class="btn btn-correct" id="markRec">✅ Got it!</button>';
+    $('#stopRec').onclick=()=>stop(false);
+    $('#markRec').onclick=()=>{ gotWord=true; stop(true); };
+    // timer pip
+    tickTimer=setInterval(()=>{
+      const s=((Date.now()-startTs)/1000)|0;
+      $('#recTime').textContent=Math.floor(s/60)+':'+String(s%60).padStart(2,'0');
+    },300);
+    // safety auto-stop
+    autoTimer=setTimeout(()=>stop(false),15000);
+    // speech recognition for auto-stop on the word
+    startListening();
+    $('#recHint').textContent='Recording… say the word together. I’m listening 👂';
+  }
+  function startListening(){
+    const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+    if(!SR){ $('#recHint').innerHTML='Recording… tap <b>Got it!</b> when they say it (auto-listen isn’t supported on this device).'; return; }
+    try{
+      recog=new SR(); recog.lang='en-US'; recog.continuous=true; recog.interimResults=true;
+      $('#listenPip').classList.add('on');
+      const target=currentCard.word.toLowerCase().replace(/[^a-z ]/g,'').trim();
+      recog.onresult=ev=>{
+        let txt='';
+        for(let i=ev.resultIndex;i<ev.results.length;i++) txt+=ev.results[i][0].transcript+' ';
+        txt=txt.toLowerCase();
+        if(matchWord(txt,target)){ gotWord=true; stop(true); }
+      };
+      recog.onerror=()=>{};
+      recog.onend=()=>{ if(mediaRec&&mediaRec.state==='recording'){ try{recog.start();}catch(e){} } };
+      recog.start();
+    }catch(e){ $('#listenPip').classList.remove('on'); }
+  }
+  function matchWord(txt,target){
+    if(!target) return false;
+    const words=target.split(' ');
+    return words.every(w=> txt.includes(w) || txt.includes(w.replace(/s$/,'')) );
+  }
+  function stop(correct){
+    clearTimeout(autoTimer); clearInterval(tickTimer);
+    if(recog){ try{recog.onend=null;recog.stop();}catch(e){} recog=null; }
+    $('#listenPip').classList.remove('on');
+    if(mediaRec && mediaRec.state!=='inactive'){ try{mediaRec.stop();}catch(e){} }
+    gotWord = gotWord || !!correct;
+  }
+  async function finish(){
+    $('#recPip').classList.remove('on');
+    const mime=(mediaRec&&mediaRec.mimeType)||'video/webm';
+    const blob=new Blob(chunks,{type:mime});
+    chunks=[];
+    if(blob.size>1000){
+      const rec={ id:'r_'+Date.now(), cardId:currentCard.id, word:currentCard.word, ts:Date.now(), correct:gotWord, type:mime };
+      rec.blob=blob;
+      await DB.put('recordings',rec);
+      // progress
+      const p=state.settings.progress[currentCard.id]||{count:0,correct:0,last:0};
+      p.count++; if(gotWord)p.correct++; p.last=Date.now();
+      state.settings.progress[currentCard.id]=p; await saveSettings();
+    }
+    resetControls();
+    await renderSaved(currentCard.id);
+    if(gotWord){
+      $('#flashcard').classList.add('correct'); setTimeout(()=>$('#flashcard').classList.remove('correct'),700);
+      celebrate(true);
+      setTimeout(()=>speak('Yay! '+currentCard.word+'!'),300);
+      toast('Great job! ⭐');
+    }
+    renderCards();
+  }
+  async function renderSaved(cardId){
+    const all=(await DB.all('recordings')).filter(r=>r.cardId===cardId).sort((a,b)=>b.ts-a.ts);
+    const wrap=$('#savedList');
+    if(!all.length){ wrap.innerHTML=''; return; }
+    wrap.innerHTML='<h3>Saved recordings</h3>';
+    all.forEach(r=>{
+      const d=new Date(r.ts);
+      const item=document.createElement('div'); item.className='rec-item';
+      item.innerHTML=`<button class="play">▶</button>
+        <div class="meta">${r.word} ${r.correct?'<span class="ok">✓</span>':''}<small>${d.toLocaleDateString()} · ${d.toLocaleTimeString([], {hour:'numeric',minute:'2-digit'})}</small></div>
+        <button class="del" aria-label="Delete">🗑</button>`;
+      item.querySelector('.play').onclick=()=>playback(r);
+      item.querySelector('.del').onclick=async()=>{ await DB.del('recordings',r.id); renderSaved(cardId); renderCards(); };
+      wrap.appendChild(item);
+    });
+  }
+  function playback(r){
+    const v=$('#preview');
+    if(stream){ stream.getTracks().forEach(t=>t.stop()); stream=null; }
+    v.srcObject=null; v.classList.add('playback'); v.muted=false; v.controls=true;
+    v.src=URL.createObjectURL(r.blob); v.play().catch(()=>{});
+    $('#recHint').textContent='Playing back ▶ — tap Done, then reopen to record again.';
+  }
+  function close(){
+    promptToken++;
+    stopWordAudio();
+    try{ speechSynthesis.cancel(); }catch(e){}
+    clearTimeout(autoTimer); clearInterval(tickTimer);
+    if(recog){ try{recog.onend=null;recog.stop();}catch(e){} recog=null; }
+    if(mediaRec && mediaRec.state==='recording'){ try{mediaRec.stop();}catch(e){} }
+    if(stream){ stream.getTracks().forEach(t=>t.stop()); stream=null; }
+    const v=$('#preview'); v.srcObject=null; v.removeAttribute('src'); v.controls=false; v.load&&v.load();
+    $('#recSheet').classList.remove('open');
+  }
+  return {open:openCamera, close};
+})();
+$('#recBtn').onclick=()=>{ const c=visibleCards()[state.idx]; if(c){ Sound.unlock(); Rec.open(c); } };
+$('#closeRec').onclick=()=>Rec.close();
+$('#recSheet').addEventListener('click',e=>{ if(e.target===$('#recSheet')) Rec.close(); });
+
+/* ============================================================
+   POTTY
+   ============================================================ */
+const POTTY_META={
+  pee:{e:'💧',l:'Pee',ok:true,c:'var(--sun-deep)'},
+  poop:{e:'💩',l:'Poop',ok:true,c:'#C99A6A'},
+  both:{e:'⭐',l:'Pee & poop',ok:true,c:'var(--grass-deep)'},
+  try:{e:'🪑',l:'Sat & tried',ok:false,c:'var(--sky-deep)'},
+  dry:{e:'✅',l:'Stayed dry',ok:true,c:'var(--grape-deep)'},
+  accident:{e:'💦',l:'Accident',ok:false,c:'var(--bubble-deep)'},
+};
+function todayKey(d=new Date()){ return d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate(); }
+async function logPotty(type){
+  Sound.unlock();
+  const meta=POTTY_META[type];
+  const rec={id:'p_'+Date.now(),type,ts:Date.now(),day:todayKey()};
+  await DB.put('potty',rec);
+  if(meta.ok){
+    // award a star
+    if(state.settings.stardate!==todayKey()){ state.settings.stardate=todayKey(); state.settings.stars=0; }
+    state.settings.stars++;
+    Sound.star();
+    const goal=state.settings.goal;
+    if(state.settings.stars>=goal){
+      celebrate(true); speak('Hooray! You did it!'); toast('Goal reached! 🎉⭐');
+      state.settings.stars=0;
+    }else{
+      celebrate(false); toast(meta.l+'! Great job ⭐');
+      speak('Yay!');
+    }
+    await saveSettings();
+  }else if(type==='accident'){
+    toast('That’s okay — we try again 💛'); Sound.chime();
+  }else{
+    toast('Good trying! 👍'); Sound.chime();
+  }
+  renderPotty();
+}
+async function renderPotty(){
+  // sticker chart
+  const goal=state.settings.goal;
+  if(state.settings.stardate!==todayKey()) state.settings.stars=0;
+  const row=$('#stickerRow'); row.innerHTML='';
+  for(let i=0;i<goal;i++){
+    const s=document.createElement('div');
+    const filled=i<state.settings.stars;
+    s.className='sticker'+(filled?' filled':''); s.textContent=filled?'⭐':'☆';
+    row.appendChild(s);
+  }
+  $('#goalNote').textContent = state.settings.stars>=goal
+    ? 'Goal reached! 🎉'
+    : `${goal-state.settings.stars} more star${goal-state.settings.stars===1?'':'s'} to the surprise!`;
+  // today timeline
+  const all=(await DB.all('potty')).filter(p=>p.day===todayKey()).sort((a,b)=>b.ts-a.ts);
+  const tl=$('#pottyTimeline');
+  if(!all.length){ tl.innerHTML='<div class="empty">No potty logs yet today 🌱</div>'; return; }
+  tl.innerHTML='';
+  all.forEach(p=>{
+    const m=POTTY_META[p.type]; const d=new Date(p.ts);
+    const it=document.createElement('div'); it.className='tl-item';
+    it.innerHTML=`<div class="ti" style="background:${m.c}">${m.e}</div>
+      <div class="tt">${m.l}<small>${d.toLocaleTimeString([], {hour:'numeric',minute:'2-digit'})}</small></div>
+      <button class="tdel" aria-label="Delete">🗑</button>`;
+    it.querySelector('.tdel').onclick=async()=>{ await DB.del('potty',p.id); renderPotty(); };
+    tl.appendChild(it);
+  });
+}
+$$('#pottyGrid [data-log]').forEach(b=>b.onclick=()=>logPotty(b.dataset.log));
+$('#pottyStatsBtn').onclick=()=>{ requestParentGate(()=>{ go('parent'); switchTab('pottystats'); }); };
+
+/* ============================================================
+   PARENT
+   ============================================================ */
+function switchTab(name){
+  $$('.tab').forEach(t=>t.classList.toggle('active',t.dataset.tab===name));
+  $('#tab-cards').style.display      = name==='cards'?'':'none';
+  $('#tab-wordprogress').style.display = name==='wordprogress'?'':'none';
+  $('#tab-pottystats').style.display = name==='pottystats'?'':'none';
+  $('#tab-settings').style.display   = name==='settings'?'':'none';
+  if(name==='pottystats') renderPottyStats();
+  if(name==='wordprogress') renderWordStats();
+  if(name==='cards') renderCardManager();
+}
+$$('.tab').forEach(t=>t.onclick=()=>{Sound.tap();switchTab(t.dataset.tab);});
+
+function renderParent(){ renderCardManager(); renderWordStats(); renderSettingsUI(); }
+
+function getWordStats(){
+  const prog=state.settings.progress||{};
+  return Object.entries(prog).map(([id,p])=>{
+    const card=state.cards.find(c=>c.id===id);
+    const count=+p.count||0, correct=+p.correct||0, miss=Math.max(0,count-correct);
+    return {id, word:card?card.word:'(removed)', cat:card?card.cat:'', count, correct, miss,
+      accuracy:count?Math.round(correct/count*100):0, last:p.last||0};
+  }).filter(w=>w.count>0);
+}
+function renderWordStats(){
+  const panel=$('#wordStatsPanel');
+  if(!panel) return;
+  const stats=getWordStats();
+  const total=stats.reduce((s,w)=>s+w.count,0);
+  const right=stats.reduce((s,w)=>s+w.correct,0);
+  const miss=stats.reduce((s,w)=>s+w.miss,0);
+  const watch=stats.filter(w=>w.miss>0).length;
+  if(!stats.length){
+    panel.innerHTML=`<div class="word-chart-head"><h2>Word progress</h2></div>
+      <div class="empty">Practice recordings will show right and missed words here.</div>`;
+    return;
+  }
+  const rows=[...stats].sort((a,b)=>(b.miss-a.miss)||(b.count-a.count)||a.word.localeCompare(b.word));
+  panel.innerHTML=`
+    <div class="word-chart-head">
+      <h2>Word progress</h2>
+      <button class="reportbtn mini-report" id="wordReportMini">📄 Export</button>
+    </div>
+    <div class="word-kpis">
+      <div class="word-kpi good"><div class="n">${right}</div><div class="l">right</div></div>
+      <div class="word-kpi watch"><div class="n">${miss}</div><div class="l">needs help</div></div>
+      <div class="word-kpi total"><div class="n">${total}</div><div class="l">tries</div></div>
+    </div>
+    <div class="word-bars">
+      ${rows.map(w=>{
+        const okPct=w.count?Math.round(w.correct/w.count*100):0;
+        const missPct=100-okPct;
+        return `<div class="word-bar-row">
+          <div class="word-bar-label">${esc(w.word)}</div>
+          <div class="word-track" aria-label="${esc(w.word)} ${w.correct} right, ${w.miss} needs help">
+            <div class="word-seg-ok" style="width:${okPct}%"></div>
+            <div class="word-seg-miss" style="width:${missPct}%"></div>
+          </div>
+          <div class="word-bar-meta">${w.correct}/${w.count}</div>
+        </div>`;
+      }).join('')}
+    </div>
+    <div class="word-legend"><span class="ok">Right</span><span class="miss">Needs help</span><span>${watch} word${watch===1?'':'s'} to revisit</span></div>`;
+  $('#wordReportMini').onclick=()=>generateReport();
+}
+async function clearWordProgress(){
+  if(!confirm('Start word progress over? This clears practice counts and saved practice videos, but keeps cards and voices.')) return;
+  state.settings.progress={};
+  await saveSettings();
+  await DB.clear('recordings');
+  renderWordStats();
+  renderCardManager();
+  renderCards();
+  toast('Word progress reset');
+}
+async function renderCardManager(){
+  renderWordStats();
+  const wrap=$('#cardManageList'); wrap.innerHTML='';
+  DEFAULT_CATS.forEach(cat=>{
+    const cards=state.cards.filter(c=>c.cat===cat.id);
+    if(!cards.length) return;
+    const h=document.createElement('h2'); h.style.cssText='font-family:var(--display);font-weight:600;font-size:1.1rem;margin:18px 4px 8px;color:var(--ink-soft)';
+    h.textContent=cat.icon+' '+cat.name; wrap.appendChild(h);
+    cards.forEach(c=>{
+      const p=state.settings.progress[c.id];
+      const hasVoice=state.voiceCache.has(c.id);
+      const practice=p?`practiced ${p.count}x · ${p.correct} correct`:'not practiced yet';
+      const el=document.createElement('div'); el.className='pcard';
+      el.innerHTML=`<div class="pe">${c.photo?`<img src="${c.photo}" alt="">`:esc(c.emoji)}</div>
+        <div class="pinfo"><b>${esc(c.word)}</b><small>${practice} · ${hasVoice?'parent voice saved':'device voice'}</small></div>
+        <div class="pactions">
+          <button class="voice-btn${hasVoice?' has':''}" aria-label="Parent voice for ${esc(c.word)}">${hasVoice?'🔊':'🎙️'}</button>
+          ${c.custom?'<button class="pm" aria-label="Delete">🗑</button>':''}
+        </div>`;
+      el.querySelector('.voice-btn').onclick=()=>ParentVoice.open(c);
+      const del=el.querySelector('.pm');
+      if(del) del.onclick=()=>{ requestParentGate(async()=>{
+        await DB.del('cards',c.id);
+        await DB.del('voices',c.id);
+        const recs=(await DB.all('recordings')).filter(r=>r.cardId===c.id);
+        await Promise.all(recs.map(r=>DB.del('recordings',r.id)));
+        state.voiceCache.delete(c.id);
+        delete state.settings.progress[c.id];
+        state.settings.favs=state.settings.favs.filter(id=>id!==c.id);
+        await saveSettings();
+        state.cards=state.cards.filter(x=>x.id!==c.id);
+        renderCardManager();
+      }); };
+      wrap.appendChild(el);
+    });
+  });
+}
+
+/* ----- parent voice per card ----- */
+const ParentVoice=(()=>{
+  let stream, mediaRec, chunks=[], stopTimer, currentCard, discardNext=false;
+  function supportedMime(){
+    const opts=['audio/mp4','audio/webm;codecs=opus','audio/webm','audio/aac'];
+    for(const m of opts){ if(window.MediaRecorder&&MediaRecorder.isTypeSupported(m)) return m; }
+    return '';
+  }
+  function stopStream(){
+    if(stream){ stream.getTracks().forEach(t=>t.stop()); stream=null; }
+  }
+  function cleanup(){
+    clearTimeout(stopTimer);
+    if(mediaRec&&mediaRec.state==='recording'){
+      discardNext=true;
+      try{ mediaRec.stop(); }catch(e){}
+    }else stopStream();
+  }
+  function open(card){
+    currentCard=card;
+    draw();
+    openModal(cleanup);
+  }
+  function draw(msg){
+    const has=state.voiceCache.has(currentCard.id);
+    const m=$('#modalBox');
+    m.innerHTML=`
+      <h2>Parent voice</h2>
+      <p class="sub">Record the word in a familiar voice</p>
+      <div class="voice-panel">
+        <div class="voice-word">${esc(currentCard.word)}</div>
+        <div class="voice-status" id="voiceStatus">${esc(msg||`${has?'Parent voice saved':'No parent voice yet'}`)}</div>
+      </div>
+      <div class="sheet-row" id="voiceControls">
+        <button class="btn btn-rec" id="voiceStart">🎙️ Record</button>
+        <button class="btn btn-ghost" id="voicePlay">${has?'▶ Play':'🔊 Generated voice'}</button>
+      </div>
+      <div class="sheet-row">
+        ${has?'<button class="btn btn-stop" id="voiceDelete">Delete voice</button>':''}
+        <button class="btn btn-ghost btn-wide" id="voiceDone">Done</button>
+      </div>
+      <div class="hint">Keep it short and clear. This recording stays on this device.</div>`;
+    $('#voiceStart').onclick=start;
+    $('#voicePlay').onclick=play;
+    $('#voiceDone').onclick=closeModal;
+    const del=$('#voiceDelete');
+    if(del) del.onclick=remove;
+  }
+  function setStatus(text,recording=false){
+    const s=$('#voiceStatus');
+    if(!s) return;
+    s.innerHTML=recording?`<span class="voice-pulse"></span>${esc(text)}`:esc(text);
+    s.classList.toggle('recording',recording);
+  }
+  async function start(){
+    Sound.unlock();
+    if(!navigator.mediaDevices||!window.MediaRecorder){
+      setStatus('Audio recording is not supported here');
+      return;
+    }
+    chunks=[]; discardNext=false;
+    try{
+      stream=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:true,noiseSuppression:true,autoGainControl:true}});
+      const mime=supportedMime();
+      mediaRec=new MediaRecorder(stream,mime?{mimeType:mime}:undefined);
+      mediaRec.ondataavailable=e=>{ if(e.data&&e.data.size) chunks.push(e.data); };
+      mediaRec.onstop=finish;
+      mediaRec.start();
+      $('#voiceControls').innerHTML='<button class="btn btn-stop btn-wide" id="voiceStop">⏹ Stop and save</button>';
+      $('#voiceStop').onclick=stop;
+      setStatus('Recording...',true);
+      stopTimer=setTimeout(stop,4500);
+    }catch(e){
+      stopStream();
+      setStatus('Microphone blocked. Allow microphone access and try again.');
+    }
+  }
+  function stop(){
+    clearTimeout(stopTimer);
+    if(mediaRec&&mediaRec.state==='recording'){
+      try{ mediaRec.stop(); }catch(e){}
+    }else stopStream();
+  }
+  async function finish(){
+    stopStream();
+    const blob=new Blob(chunks,{type:(mediaRec&&mediaRec.mimeType)||'audio/webm'});
+    chunks=[];
+    if(discardNext){ discardNext=false; return; }
+    if(blob.size<200){
+      draw('Recording was too quiet. Try once more.');
+      return;
+    }
+    const voice={cardId:currentCard.id,word:currentCard.word,ts:Date.now(),type:blob.type,blob};
+    await DB.put('voices',voice);
+    state.voiceCache.set(currentCard.id,voice);
+    draw('Saved. Tap Play to hear it.');
+    renderCardManager();
+    renderCards();
+    toast('Parent voice saved');
+  }
+  function play(){
+    const v=state.voiceCache.get(currentCard.id);
+    if(v&&v.blob) playAudioBlob(v.blob,()=>toast('Could not play this voice'));
+    else speak(currentCard.word);
+  }
+  async function remove(){
+    await DB.del('voices',currentCard.id);
+    state.voiceCache.delete(currentCard.id);
+    draw('Parent voice removed');
+    renderCardManager();
+    renderCards();
+    toast('Parent voice removed');
+  }
+  return {open,cleanup};
+})();
+
+/* ----- add card ----- */
+const EMOJI_CHOICES='😀😄🥰😴🤗😢🐶🐱🐰🐻🦊🐸🐵🦁🐮🐷🐔🐧🦄🐢🐝🦋🌳🌸🌈☀️🌙⭐🍎🍌🍓🍇🍪🍰🥛🧃🍞🥚🧀🥕🍕🚗🚌🚂✈️⛵🚲🏠🛏️🛁🚽👕👟🧢⚽🏀🧸📖✏️🖍️🎵🎈🎁💧🔵🔴🟢🟡🟣🟠'.match(/./gu);
+function openAddCard(){
+  let sel={emoji:'😀',photo:null,word:'',cat:'needs'};
+  const m=$('#modalBox');
+  m.innerHTML=`
+    <h2>Add a card</h2>
+    <p class="sub">A picture and a word to learn</p>
+    <div class="pickrow">
+      <div class="photo-prev" id="aPrev">😀</div>
+      <div style="flex:1">
+        <label style="font-weight:900;display:block;margin-bottom:8px">Use a photo</label>
+        <button class="pill-btn" id="aPhotoBtn" style="width:100%">📷 Take / choose photo</button>
+        <input type="file" id="aPhoto" accept="image/*" capture="environment" style="display:none">
+      </div>
+    </div>
+    <div class="field">
+      <label>…or pick an emoji</label>
+      <div class="emoji-pick" id="aEmoji"></div>
+    </div>
+    <div class="field"><label>Word</label><input type="text" id="aWord" placeholder="e.g. Banana" maxlength="20"></div>
+    <div class="field"><label>Category</label>
+      <div class="seg" id="aCat" style="flex-wrap:wrap;gap:6px">
+        ${DEFAULT_CATS.map(c=>`<button data-c="${c.id}" style="flex:0 0 auto;padding:10px 12px">${c.icon} ${c.name}</button>`).join('')}
+      </div>
+    </div>
+    <div class="sheet-row">
+      <button class="btn btn-ghost" id="aCancel">Cancel</button>
+      <button class="btn btn-correct" id="aSave">Save card</button>
+    </div>`;
+  const ep=$('#aEmoji');
+  EMOJI_CHOICES.forEach(e=>{ const b=document.createElement('button'); b.textContent=e;
+    b.onclick=()=>{ sel.emoji=e; sel.photo=null; $('#aPrev').innerHTML=e; $$('#aEmoji button').forEach(x=>x.classList.remove('sel')); b.classList.add('sel'); };
+    ep.appendChild(b); });
+  $('#aEmoji button').classList.add('sel');
+  $('#aCat button[data-c="needs"]').classList.add('on');
+  $$('#aCat button').forEach(b=>b.onclick=()=>{ sel.cat=b.dataset.c; $$('#aCat button').forEach(x=>x.classList.remove('on')); b.classList.add('on'); });
+  $('#aPhotoBtn').onclick=()=>$('#aPhoto').click();
+  $('#aPhoto').onchange=e=>{
+    const file=e.target.files[0]; if(!file)return;
+    shrinkImage(file,420).then(dataUrl=>{ sel.photo=dataUrl; $('#aPrev').innerHTML=`<img src="${dataUrl}">`; $$('#aEmoji button').forEach(x=>x.classList.remove('sel')); });
+  };
+  $('#aWord').oninput=e=>sel.word=e.target.value;
+  $('#aCancel').onclick=closeModal;
+  $('#aSave').onclick=async()=>{
+    sel.word=$('#aWord').value.trim();
+    if(!sel.word){ toast('Please type a word'); return; }
+    const card={id:'c_'+Date.now(),cat:sel.cat,word:sel.word,emoji:sel.photo?'':sel.emoji,photo:sel.photo,custom:true};
+    await DB.put('cards',card); state.cards.push(card);
+    ensureElevenAudio(card.word).catch(()=>{});
+    closeModal(); toast('Card added! 🎉'); Sound.star();
+    renderCardManager();
+  };
+  openModal();
+}
+function shrinkImage(file,max){
+  return new Promise(res=>{
+    const img=new Image(); const url=URL.createObjectURL(file);
+    img.onload=()=>{
+      let{width:w,height:h}=img; const scale=Math.min(1,max/Math.max(w,h)); w*=scale;h*=scale;
+      const cv=document.createElement('canvas'); cv.width=w;cv.height=h;
+      cv.getContext('2d').drawImage(img,0,0,w,h);
+      URL.revokeObjectURL(url); res(cv.toDataURL('image/jpeg',0.82));
+    };
+    img.src=url;
+  });
+}
+$('#addCardBtn').onclick=()=>requestParentGate(openAddCard);
+
+/* ----- potty stats ----- */
+async function renderPottyStats(){
+  const all=await DB.all('potty');
+  const now=new Date();
+  // week stats
+  const weekAgo=now.getTime()-7*864e5;
+  const week=all.filter(p=>p.ts>=weekAgo);
+  const succ=week.filter(p=>POTTY_META[p.type].ok).length;
+  const acc=week.filter(p=>p.type==='accident').length;
+  const rate=(succ+acc)>0?Math.round(succ/(succ+acc)*100):0;
+  $('#pottyStats').innerHTML=`
+    <div class="stat"><div class="n">${succ}</div><div class="l">successes</div></div>
+    <div class="stat"><div class="n">${acc}</div><div class="l">accidents</div></div>
+    <div class="stat"><div class="n">${rate}%</div><div class="l">success rate</div></div>`;
+  // last 7 days bars
+  const bars=$('#pottyBars'); bars.innerHTML='';
+  const days=[];
+  for(let i=6;i>=0;i--){ const d=new Date(now.getTime()-i*864e5); days.push(d); }
+  const maxV=Math.max(1,...days.map(d=>all.filter(p=>p.day===todayKey(d)&&POTTY_META[p.type].ok).length));
+  days.forEach(d=>{
+    const v=all.filter(p=>p.day===todayKey(d)&&POTTY_META[p.type].ok).length;
+    const col=document.createElement('div'); col.className='bar-col';
+    col.innerHTML=`<div class="bv">${v||''}</div><div class="bar" style="height:${Math.max(4,v/maxV*100)}%"></div><div class="bl">${['Su','Mo','Tu','We','Th','Fr','Sa'][d.getDay()]}</div>`;
+    bars.appendChild(col);
+  });
+}
+
+/* ----- reminder timer ----- */
+let timerInt, timerEnd=0;
+function startTimer(mins){
+  stopTimer(); timerEnd=Date.now()+mins*60000;
+  $$('#tab-pottystats [data-timer]').forEach(b=>b.classList.toggle('active',+b.dataset.timer===mins));
+  timerInt=setInterval(()=>{
+    let left=Math.max(0,timerEnd-Date.now());
+    const m=Math.floor(left/60000), s=Math.floor((left%60000)/1000);
+    $('#timerDisplay').textContent=m+':'+String(s).padStart(2,'0');
+    if(left<=0){ stopTimer(); Sound.unlock(); Sound.alarm(); toast('⏰ Potty break time!'); }
+  },500);
+}
+function stopTimer(){ clearInterval(timerInt); timerInt=null; $('#timerDisplay').textContent='--:--'; $$('#tab-pottystats [data-timer]').forEach(b=>b.classList.remove('active')); }
+$$('#tab-pottystats [data-timer]').forEach(b=>b.onclick=()=>startTimer(+b.dataset.timer));
+$('#timerStop').onclick=stopTimer;
+
+/* ============================================================
+   SETTINGS
+   ============================================================ */
+function renderSettingsUI(){
+  $('#childName').value=state.settings.name;
+  $('#sw-sound').classList.toggle('on',state.settings.sound);
+  $('#sw-parentVoice').classList.toggle('on',state.settings.preferParentVoice!==false);
+  $$('#seg-intensity button').forEach(b=>b.classList.toggle('on',b.dataset.int===state.settings.intensity));
+  $$('#seg-speed button').forEach(b=>b.classList.toggle('on',+b.dataset.spd===state.settings.speed));
+  $$('#seg-goal button').forEach(b=>b.classList.toggle('on',+b.dataset.goal===state.settings.goal));
+}
+$('#childName').oninput=async e=>{ state.settings.name=e.target.value.trim(); await saveSettings(); updateGreeting(); };
+$('#sw-sound').onclick=async()=>{ state.settings.sound=!state.settings.sound; $('#sw-sound').classList.toggle('on',state.settings.sound); await saveSettings(); if(state.settings.sound)Sound.chime(); };
+$('#sw-parentVoice').onclick=async()=>{ state.settings.preferParentVoice=!(state.settings.preferParentVoice!==false); $('#sw-parentVoice').classList.toggle('on',state.settings.preferParentVoice); await saveSettings(); toast(state.settings.preferParentVoice?'Parent voices on':'Device voice only'); };
+$$('#seg-intensity button').forEach(b=>b.onclick=async()=>{ state.settings.intensity=b.dataset.int; renderSettingsUI(); await saveSettings(); celebrate(b.dataset.int!=='calm'); });
+$$('#seg-speed button').forEach(b=>b.onclick=async()=>{ state.settings.speed=+b.dataset.spd; renderSettingsUI(); await saveSettings(); speak('Hello'); });
+$$('#seg-goal button').forEach(b=>b.onclick=async()=>{ state.settings.goal=+b.dataset.goal; renderSettingsUI(); await saveSettings(); });
+
+$('#exportBtn').onclick=async()=>{
+  const data={ exportedAt:new Date().toISOString(), settings:state.settings,
+    cards:state.cards.filter(c=>c.custom), potty:await DB.all('potty'),
+    voices:(await DB.all('voices')).map(({blob,...v})=>v) };
+  const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+  const a=document.createElement('a'); a.href=URL.createObjectURL(blob);
+  a.download='little-words-backup-'+todayKey()+'.json'; a.click();
+  toast('Backup saved ⬇️ (audio/video stay on device)');
+};
+$('#resetPotty').onclick=()=>requestParentGate(async()=>{ if(confirm('Clear all potty history? Star chart resets too.')){ await DB.clear('potty'); state.settings.stars=0; await saveSettings(); toast('Potty history cleared'); } });
+$('#resetAll').onclick=()=>requestParentGate(async()=>{ if(confirm('Erase ALL data — cards, recordings, generated voices, parent voices, potty logs, settings? This cannot be undone.')){ await DB.clear('cards'); await DB.clear('recordings'); await DB.clear('voices'); await DB.clear('ttsAudio'); await DB.clear('potty'); await DB.clear('kv'); location.reload(); } });
+
+async function saveSettings(){ await DB.put('kv',state.settings,'settings'); }
+
+/* ---------- mascot (Twinkle the star) ---------- */
+function mascotSVG(uid){
+  return `<svg viewBox="0 0 100 100">
+    <defs><linearGradient id="mg${uid}" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#FFE680"/><stop offset="1" stop-color="#FFC23C"/></linearGradient></defs>
+    <path d="M50 6 L62 36 L95 38 L70 59 L78 92 L50 73 L22 92 L30 59 L5 38 L38 36 Z"
+      fill="url(#mg${uid})" stroke="#F2A615" stroke-width="3.5" stroke-linejoin="round"/>
+    <ellipse cx="35" cy="56" rx="5.5" ry="4" fill="#FF9DB0" opacity=".75"/>
+    <ellipse cx="65" cy="56" rx="5.5" ry="4" fill="#FF9DB0" opacity=".75"/>
+    <circle cx="41" cy="48" r="4.6" fill="#4A2E6B"/><circle cx="59" cy="48" r="4.6" fill="#4A2E6B"/>
+    <circle cx="42.7" cy="46.3" r="1.5" fill="#fff"/><circle cx="60.7" cy="46.3" r="1.5" fill="#fff"/>
+    <path d="M40 59 Q50 68 60 59" stroke="#4A2E6B" stroke-width="3.6" fill="none" stroke-linecap="round"/>
+  </svg>`;
+}
+
+/* ============================================================
+   PROGRESS REPORT  (PDF, with print fallback)
+   ============================================================ */
+async function gatherReport(){
+  const name=state.settings.name||'Your child';
+  const recs=await DB.all('recordings');
+  const potty=await DB.all('potty');
+  const prog=state.settings.progress||{};
+  const wordOf=id=>{const c=state.cards.find(c=>c.id===id); return c?c.word:'(removed)';};
+  const practiced=Object.entries(prog).filter(([,p])=>p.count>0);
+  const wordStats=getWordStats();
+  const top=wordStats.map(w=>({word:w.word,count:w.count,correct:w.correct,miss:w.miss,accuracy:w.accuracy,last:w.last}))
+                     .sort((a,b)=>b.count-a.count);
+  const wordBreakdown=[...wordStats].sort((a,b)=>(b.miss-a.miss)||(a.accuracy-b.accuracy)||(b.count-a.count)||a.word.localeCompare(b.word));
+  const review=wordBreakdown.slice(0,10);
+  const totalAttempts=practiced.reduce((s,[,p])=>s+p.count,0);
+  const totalCorrect=practiced.reduce((s,[,p])=>s+(p.correct||0),0);
+  const totalMisses=Math.max(0,totalAttempts-totalCorrect);
+  const favWords=(state.settings.favs||[]).map(wordOf);
+  const META=POTTY_META, now=Date.now();
+  const inDays=d=>potty.filter(p=>p.ts>=now-d*864e5);
+  const wk=inDays(7), mo=inDays(30);
+  const succ7=wk.filter(p=>META[p.type].ok).length, acc7=wk.filter(p=>p.type==='accident').length;
+  const rate7=(succ7+acc7)?Math.round(succ7/(succ7+acc7)*100):0;
+  const succ30=mo.filter(p=>META[p.type].ok).length, acc30=mo.filter(p=>p.type==='accident').length;
+  let streak=0;
+  for(let i=0;i<60;i++){
+    const key=todayKey(new Date(now-i*864e5));
+    const day=potty.filter(p=>p.day===key);
+    if(i===0 && !day.length) continue;
+    const ok=day.some(p=>META[p.type].ok), bad=day.some(p=>p.type==='accident');
+    if(ok && !bad) streak++; else break;
+  }
+  const days7=[];
+  for(let i=6;i>=0;i--){const d=new Date(now-i*864e5);
+    days7.push({lbl:['Su','Mo','Tu','We','Th','Fr','Sa'][d.getDay()], v:potty.filter(p=>p.day===todayKey(d)&&META[p.type].ok).length});}
+  return {name,top,review,wordBreakdown,totalAttempts,totalCorrect,totalMisses,wordsTried:practiced.length,totalRecs:recs.length,
+          favWords,rate7,succ7,acc7,succ30,acc30,streak,days7,
+          date:new Date().toLocaleDateString(undefined,{year:'numeric',month:'long',day:'numeric'})};
+}
+
+async function generateReport(){
+  toast('Building report…');
+  const d=await gatherReport();
+  const ns=window.jspdf;
+  if(ns && ns.jsPDF){ try{ return renderPDF(d); }catch(e){ console.error(e); } }
+  renderPrint(d); // fallback when library can't load (e.g. offline)
+}
+
+function renderPDF(d){
+  const { jsPDF }=window.jspdf;
+  const doc=new jsPDF({unit:'pt',format:'a4'});
+  const W=595, M=40; let y=0;
+  const C={grape:[123,69,232],coral:[255,122,107],grass:[31,168,111],sky:[30,143,224],
+           pink:[232,75,146],sun:[242,166,21],ink:[58,46,85],soft:[110,95,140],line:[237,231,247],cloud:[247,243,255]};
+  const fill=c=>doc.setFillColor(c[0],c[1],c[2]);
+  const txt=c=>doc.setTextColor(c[0],c[1],c[2]);
+  const F=(s,sz)=>{doc.setFont('helvetica',s);doc.setFontSize(sz);};
+
+  // header band
+  fill(C.grape); doc.rect(0,0,W,118,'F');
+  fill(C.sun); doc.circle(W-62,44,30,'F'); // little sun
+  txt([255,255,255]); F('bold',26); doc.text('Little Words',M,56);
+  F('bold',15); doc.text('Progress Report',M,80);
+  F('normal',11); doc.text(d.name+'  ·  '+d.date,M,100);
+  y=150;
+
+  // section: words
+  txt(C.ink); F('bold',16); doc.text('Word Learning',M,y); y+=14;
+  const chipW=(W-2*M-2*12)/3;
+  const chips=[['Words practiced',String(d.wordsTried),C.sky],
+               ['Right',String(d.totalCorrect),C.grass],
+               ['Needs help',String(d.totalMisses),C.pink]];
+  chips.forEach((c,i)=>{const x=M+i*(chipW+12);
+    fill(c[2]); doc.roundedRect(x,y,chipW,58,12,12,'F');
+    txt([255,255,255]); F('bold',22); doc.text(c[1],x+chipW/2,y+30,{align:'center'});
+    F('bold',9); doc.text(c[0].toUpperCase(),x+chipW/2,y+46,{align:'center'});});
+  y+=78;
+
+  // word breakdown with right/missed bars
+  const wordRows=(d.wordBreakdown&&d.wordBreakdown.length?d.wordBreakdown:d.top);
+  txt(C.soft); F('bold',10); doc.text(wordRows.length?'WORD BREAKDOWN — RIGHT VS NEEDS HELP':'No words practiced yet — recordings will appear here.',M,y); y+=12;
+  wordRows.forEach(w=>{
+    if(y>700){
+      doc.addPage(); y=50;
+      txt(C.ink); F('bold',16); doc.text('Word Learning Continued',M,y); y+=18;
+      txt(C.soft); F('bold',10); doc.text('WORD BREAKDOWN — RIGHT VS NEEDS HELP',M,y); y+=12;
+    }
+    fill(C.cloud); doc.roundedRect(M,y,W-2*M,30,8,8,'F');
+    txt(C.ink); F('bold',12); doc.text(w.word,M+12,y+19);
+    const bx=W-M-206, bw=128;
+    fill(C.line); doc.roundedRect(bx,y+10,bw,10,5,5,'F');
+    const okPct=w.count?Math.max(0,w.correct/w.count):0;
+    if(w.correct){ fill(C.grass); doc.roundedRect(bx,y+10,bw*okPct,10,5,5,'F'); }
+    if(w.miss){ fill(C.pink); doc.roundedRect(bx+bw*okPct,y+10,bw*(1-okPct),10,5,5,'F'); }
+    txt(C.soft); F('normal',9); doc.text(w.correct+' right · '+w.miss+' help',W-M,y+18,{align:'right'});
+    y+=36;
+  });
+  if(d.favWords.length){ y+=4; txt(C.soft); F('bold',10); doc.text('WORKING ON',M,y); y+=14;
+    txt(C.ink); F('normal',11); doc.text(doc.splitTextToSize(d.favWords.join(' · '),W-2*M),M,y); y+=18; }
+
+  // section: potty
+  if(y>620){ doc.addPage(); y=50; }
+  else y+=14;
+  txt(C.ink); F('bold',16); doc.text('Potty Training',M,y); y+=14;
+  const pchips=[['Success rate (7d)',d.rate7+'%',C.grass],
+                ['Successes (7d)',String(d.succ7),C.sky],
+                ['Best streak',d.streak+(d.streak===1?' day':' days'),C.pink]];
+  pchips.forEach((c,i)=>{const x=M+i*(chipW+12);
+    fill(c[2]); doc.roundedRect(x,y,chipW,58,12,12,'F');
+    txt([255,255,255]); F('bold',22); doc.text(c[1],x+chipW/2,y+30,{align:'center'});
+    F('bold',9); doc.text(c[0].toUpperCase(),x+chipW/2,y+46,{align:'center'});});
+  y+=82;
+
+  // 7-day bar chart
+  txt(C.soft); F('bold',10); doc.text('SUCCESSES — LAST 7 DAYS',M,y); y+=10;
+  const chartX=M, chartW=W-2*M, chartH=90, base=y+chartH;
+  const maxV=Math.max(1,...d.days7.map(x=>x.v));
+  const slot=chartW/7;
+  d.days7.forEach((x,i)=>{
+    const bw=28, bx=chartX+i*slot+(slot-bw)/2;
+    const h=Math.max(4,(x.v/maxV)*chartH);
+    fill(C.line); doc.roundedRect(bx,y,bw,chartH,6,6,'F');
+    fill(C.grass); doc.roundedRect(bx,base-h,bw,h,6,6,'F');
+    txt(C.soft); F('bold',9); doc.text(x.lbl,bx+bw/2,base+14,{align:'center'});
+    if(x.v){txt(C.ink); F('bold',9); doc.text(String(x.v),bx+bw/2,base-h-4,{align:'center'});}
+  });
+  y=base+30;
+  txt(C.soft); F('normal',10);
+  doc.text('Accidents this week: '+d.acc7+'   ·   Last 30 days: '+d.succ30+' successes, '+d.acc30+' accidents',M,y);
+
+  // footer
+  fill(C.cloud); doc.roundedRect(M,800,W-2*M,1,0,0,'F');
+  txt(C.soft); F('normal',9);
+  doc.text('Made with Little Words. All data stays private on the family device — this report is the only thing shared.',M,816);
+
+  const safe=(d.name||'child').replace(/[^a-z0-9]/gi,'-');
+  doc.save('LittleWords-'+safe+'-'+todayKey()+'.pdf');
+  toast('Report saved 📄');
+}
+
+function renderPrint(d){
+  // Offline fallback: open a styled page and let iOS "Print → Save to PDF / Share"
+  const wordRows=(d.wordBreakdown&&d.wordBreakdown.length?d.wordBreakdown:d.top);
+  const row=w=>{
+    const okPct=w.count?Math.round(w.correct/w.count*100):0;
+    return `<div class="r">
+      <div class="rtop"><b>${esc(w.word)}</b><span>${w.correct} right · ${w.miss} needs help</span></div>
+      <div class="track"><i style="width:${okPct}%"></i><em style="width:${100-okPct}%"></em></div>
+    </div>`;
+  };
+  const bars=d.days7.map(x=>`<div class="bc"><div class="bv">${x.v||''}</div><div class="b" style="height:${Math.max(6,x.v/Math.max(1,...d.days7.map(y=>y.v))*80)}px"></div><div class="bl">${x.lbl}</div></div>`).join('');
+  const html=`<!doctype html><html><head><meta charset="utf-8"><title>Little Words — ${esc(d.name)}</title>
+  <style>
+    *{font-family:-apple-system,Helvetica,Arial,sans-serif;box-sizing:border-box}
+    body{margin:0;color:#3A2E55}
+    .hd{background:#7A45E8;color:#fff;padding:26px 32px}
+    .hd h1{margin:0;font-size:24px} .hd p{margin:4px 0 0;opacity:.9}
+    .wrap{padding:24px 32px}
+    h2{font-size:17px;margin:22px 0 12px}
+    .chips{display:flex;gap:12px}
+    .chip{flex:1;border-radius:12px;color:#fff;text-align:center;padding:16px 8px}
+    .chip .n{font-size:22px;font-weight:800} .chip .l{font-size:10px;text-transform:uppercase;font-weight:700;margin-top:4px}
+    .r{background:#F7F3FF;border-radius:8px;padding:10px 14px;margin-bottom:7px;font-size:13px}
+    .rtop{display:flex;justify-content:space-between;gap:12px;margin-bottom:8px}
+    .r span{color:#6E5F8C}
+    .track{height:10px;background:#EDE7F7;border-radius:99px;overflow:hidden;display:flex}
+    .track i{display:block;background:#1FA86F}.track em{display:block;background:#E84B92}
+    .bars{display:flex;align-items:flex-end;gap:10px;height:120px;margin-top:8px}
+    .bc{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:6px}
+    .b{width:28px;background:#1FA86F;border-radius:6px}
+    .bl{font-size:11px;color:#6E5F8C;font-weight:700} .bv{font-size:11px;font-weight:800}
+    .foot{color:#9A8FBC;font-size:11px;margin-top:24px;border-top:1px solid #EDE7F7;padding-top:12px}
+    @media print{.noprint{display:none}}
+    .noprint{position:fixed;top:12px;right:12px;background:#7A45E8;color:#fff;border:none;padding:12px 18px;border-radius:10px;font-weight:800;font-size:15px}
+  </style></head><body>
+  <button class="noprint" onclick="window.print()">Save as PDF</button>
+  <div class="hd"><h1>Little Words · Progress Report</h1><p>${esc(d.name)} · ${d.date}</p></div>
+  <div class="wrap">
+    <h2>Word Learning</h2>
+    <div class="chips">
+      <div class="chip" style="background:#1E8FE0"><div class="n">${d.wordsTried}</div><div class="l">Words practiced</div></div>
+      <div class="chip" style="background:#1FA86F"><div class="n">${d.totalCorrect}</div><div class="l">Right</div></div>
+      <div class="chip" style="background:#E84B92"><div class="n">${d.totalMisses}</div><div class="l">Needs help</div></div>
+    </div>
+    <h2>Word breakdown</h2>
+    ${wordRows.map(row).join('')||'<p style="color:#9A8FBC">No words practiced yet.</p>'}
+    ${d.favWords.length?`<h2>Working on</h2><p>${d.favWords.map(esc).join(' · ')}</p>`:''}
+    <h2>Potty Training</h2>
+    <div class="chips">
+      <div class="chip" style="background:#1FA86F"><div class="n">${d.rate7}%</div><div class="l">Success rate 7d</div></div>
+      <div class="chip" style="background:#1E8FE0"><div class="n">${d.succ7}</div><div class="l">Successes 7d</div></div>
+      <div class="chip" style="background:#E84B92"><div class="n">${d.streak}</div><div class="l">Best streak</div></div>
+    </div>
+    <h2>Successes — last 7 days</h2>
+    <div class="bars">${bars}</div>
+    <p style="color:#6E5F8C;font-size:12px">Accidents this week: ${d.acc7} · Last 30 days: ${d.succ30} successes, ${d.acc30} accidents</p>
+    <div class="foot">Made with Little Words. All data stays private on the family device — this report is the only thing shared.</div>
+  </div></body></html>`;
+  const w=window.open('','_blank');
+  if(w){ w.document.write(html); w.document.close(); setTimeout(()=>{try{w.print();}catch(e){}},400); toast('Use Share → Print to save the PDF'); }
+  else { toast('Please allow pop-ups to make the report'); }
+}
+$('#reportBtn').onclick=()=>generateReport();
+$('#wordReportBtn').onclick=()=>generateReport();
+$('#resetWordProgress').onclick=()=>requestParentGate(clearWordProgress);
+
+/* ============================================================
+   PARENT GATE
+   ============================================================ */
+function requestParentGate(onPass){
+  const a=2+((Math.random()*7)|0); let b=2+((Math.random()*7)|0); while(b===a){ b=2+((Math.random()*7)|0); }
+  const big=Math.max(a,b);
+  const m=$('#modalBox');
+  m.innerHTML=`<h2>For grown-ups 🔒</h2><p class="sub">Tap the bigger number</p>
+    <div class="gate-nums">
+      <button class="gate-num" data-v="${a}">${a}</button>
+      <button class="gate-num" data-v="${b}">${b}</button>
+    </div>
+    <div class="sheet-row"><button class="btn btn-ghost btn-wide" id="gateCancel">Cancel</button></div>`;
+  $$('#modalBox .gate-num').forEach(btn=>btn.onclick=()=>{
+    if(+btn.dataset.v===big && a!==b){ closeModal(); onPass(); }
+    else { toast('Try again'); requestParentGate(onPass); }
+  });
+  $('#gateCancel').onclick=closeModal;
+  openModal();
+}
+$('#parentGate').onclick=()=>requestParentGate(()=>{ go('parent'); switchTab('cards'); });
+
+let modalCleanup=null;
+function openModal(cleanup=null){ modalCleanup=cleanup; $('#modalBack').classList.add('open'); }
+function closeModal(){
+  const cleanup=modalCleanup; modalCleanup=null;
+  if(cleanup) cleanup();
+  $('#modalBack').classList.remove('open');
+}
+$('#modalBack').addEventListener('click',e=>{ if(e.target===$('#modalBack')) closeModal(); });
+
+/* ============================================================
+   INIT
+   ============================================================ */
+function updateGreeting(){
+  const n=state.settings.name;
+  const hour=new Date().getHours();
+  const part=hour<12?'Good morning':hour<18?'Hi there':'Good evening';
+  $('#greeting').textContent = n?`${part}, ${n}! 👋`:`${part}! 👋`;
+}
+function speakGreetingName(){
+  if(state.settings.name) setTimeout(()=>speak('Hi '+state.settings.name),250);
+}
+function continueAfterStartup(){
+  closeModal();
+  setTimeout(()=>{
+    if(state.settings.name) speakGreetingName();
+    else askChildName();
+  },160);
+}
+function askChildName(){
+  const m=$('#modalBox');
+  m.innerHTML=`
+    <h2>Who is using Little Words?</h2>
+    <p class="sub">This name will be used for greetings and reports</p>
+    <div class="field">
+      <label>Child's name</label>
+      <input type="text" id="firstNameInput" placeholder="e.g. Leo" maxlength="24">
+    </div>
+    <div class="sheet-row">
+      <button class="btn btn-correct" id="firstNameSave">Save name</button>
+      <button class="btn btn-ghost" id="firstNameLater">Later</button>
+    </div>`;
+  $('#firstNameSave').onclick=async()=>{
+    const v=$('#firstNameInput').value.trim();
+    if(!v){ toast('Please type a name'); return; }
+    state.settings.name=v;
+    await saveSettings();
+    updateGreeting();
+    closeModal();
+    speakGreetingName();
+  };
+  $('#firstNameLater').onclick=closeModal;
+  openModal();
+  setTimeout(()=>$('#firstNameInput')&&$('#firstNameInput').focus(),120);
+}
+async function warmSpeechRecognition(){
+  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+  if(!SR) return;
+  await new Promise(res=>{
+    let done=false, rec;
+    const finish=()=>{ if(done) return; done=true; try{rec&&rec.stop();}catch(e){} res(); };
+    try{
+      rec=new SR(); rec.lang='en-US'; rec.continuous=false; rec.interimResults=false;
+      rec.onstart=()=>setTimeout(finish,350);
+      rec.onerror=finish; rec.onend=finish;
+      rec.start();
+      setTimeout(finish,1200);
+    }catch(e){ finish(); }
+  });
+}
+async function primeStartupPermissions(){
+  const btn=$('#permStart');
+  if(btn){ btn.disabled=true; btn.textContent='Setting up...'; }
+  Sound.unlock();
+  try{ speechSynthesis.getVoices(); refreshVoices(); }catch(e){}
+  try{
+    if(navigator.mediaDevices&&navigator.mediaDevices.getUserMedia){
+      const s=await navigator.mediaDevices.getUserMedia({video:{facingMode:'user'},audio:true});
+      s.getTracks().forEach(t=>t.stop());
+      await warmSpeechRecognition();
+      state.settings.permissionsPrimedAt=Date.now();
+      await saveSettings();
+      toast('Camera and mic ready');
+    }
+    continueAfterStartup();
+  }catch(e){
+    if(btn){ btn.disabled=false; btn.textContent='Try again'; }
+    const status=$('#permStatus');
+    if(status) status.textContent='Camera or microphone is blocked. Allow both in the browser prompt, then try again.';
+  }
+}
+function showStartupPermissions(){
+  if(!(navigator.mediaDevices&&navigator.mediaDevices.getUserMedia)){
+    if(state.settings.name) speakGreetingName(); else askChildName();
+    return;
+  }
+  const m=$('#modalBox');
+  m.innerHTML=`
+    <h2>Start Little Words</h2>
+    <p class="sub">Set up camera, microphone, and sound now</p>
+    <div class="voice-panel">
+      <div class="voice-word">Ready?</div>
+      <div class="voice-status" id="permStatus">One tap here helps avoid prompts during cards and recordings.</div>
+    </div>
+    <div class="sheet-row">
+      <button class="btn btn-correct btn-wide" id="permStart">Start app</button>
+    </div>
+    <div class="sheet-row">
+      <button class="btn btn-ghost btn-wide" id="permSkip">Not now</button>
+    </div>`;
+  $('#permStart').onclick=primeStartupPermissions;
+  $('#permSkip').onclick=continueAfterStartup;
+  openModal();
+}
+async function init(){
+  // settings
+  const s=await DB.get('kv','settings');
+  if(s) state.settings=Object.assign(state.settings,s);
+  // cards (seed defaults once)
+  let cards=await DB.all('cards');
+  const seeded=await DB.get('kv','seeded');
+  if(!seeded){
+    for(const [cat,word,emoji] of DEFAULT_CARDS){
+      await DB.put('cards',{id:'d_'+cat+'_'+word.replace(/\W/g,''),cat,word,emoji,custom:false});
+    }
+    await DB.put('kv',true,'seeded');
+    cards=await DB.all('cards');
+  }
+  // keep order: by default list, then customs
+  const order={}; DEFAULT_CARDS.forEach((c,i)=>order['d_'+c[0]+'_'+c[1].replace(/\W/g,'')]=i);
+  cards.sort((a,b)=>(order[a.id]??1e6+a.id.localeCompare(b.id))-(order[b.id]??1e6));
+  state.cards=cards;
+  await loadVoiceCache();
+  refreshVoices();
+  updateGreeting();
+  $('#mascot').innerHTML=mascotSVG('home');
+  renderSettingsUI();
+  // unlock audio + tts on first touch (iOS requirement)
+  const unlock=()=>{ Sound.unlock(); try{speechSynthesis.getVoices();}catch(e){} document.removeEventListener('touchstart',unlock); document.removeEventListener('click',unlock); };
+  document.addEventListener('touchstart',unlock,{once:true});
+  document.addEventListener('click',unlock,{once:true});
+  setTimeout(showStartupPermissions,250);
+}
+init();
+</script>
+</body>
+</html>
