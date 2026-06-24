@@ -25,9 +25,13 @@ const PORT = Number(process.env.PORT || 8765);
 const HOST = process.env.HOST || '127.0.0.1';
 const ROOT = __dirname;
 
+function cleanEnvValue(value) {
+  return String(value || '').trim().replace(/^[A-Z0-9_]+\s*=\s*/, '').trim();
+}
+
 const ELEVENLABS_API_KEY = process.env.ELEVENLABS_API_KEY || '';
-const ELEVENLABS_VOICE_ID = process.env.ELEVENLABS_VOICE_ID || '';
-const ELEVENLABS_FALLBACK_VOICE_ID = process.env.ELEVENLABS_FALLBACK_VOICE_ID || 'FGY2WhTYpPnrIDTdsKH5';
+const ELEVENLABS_VOICE_ID = cleanEnvValue(process.env.ELEVENLABS_VOICE_ID);
+const ELEVENLABS_FALLBACK_VOICE_ID = cleanEnvValue(process.env.ELEVENLABS_FALLBACK_VOICE_ID) || 'FGY2WhTYpPnrIDTdsKH5';
 const ELEVENLABS_MODEL_ID = process.env.ELEVENLABS_MODEL_ID || 'eleven_multilingual_v2';
 const ELEVENLABS_OUTPUT_FORMAT = process.env.ELEVENLABS_OUTPUT_FORMAT || 'mp3_44100_128';
 

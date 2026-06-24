@@ -18,8 +18,8 @@
 export async function onRequestPost(context) {
   const { request, env } = context;
   const apiKey = env.ELEVENLABS_API_KEY || '';
-  const primaryVoiceId = env.ELEVENLABS_VOICE_ID || '';
-  const fallbackVoiceId = env.ELEVENLABS_FALLBACK_VOICE_ID || 'FGY2WhTYpPnrIDTdsKH5';
+  const primaryVoiceId = cleanEnvValue(env.ELEVENLABS_VOICE_ID);
+  const fallbackVoiceId = cleanEnvValue(env.ELEVENLABS_FALLBACK_VOICE_ID) || 'FGY2WhTYpPnrIDTdsKH5';
 
   if (!apiKey || !primaryVoiceId) {
     return json({ error: 'ElevenLabs is not configured' }, 503);
@@ -95,8 +95,8 @@ export async function onRequest(context) {
 }
 
 function ttsConfig(env) {
-  const primaryVoiceId = env.ELEVENLABS_VOICE_ID || '';
-  const fallbackVoiceId = env.ELEVENLABS_FALLBACK_VOICE_ID || 'FGY2WhTYpPnrIDTdsKH5';
+  const primaryVoiceId = cleanEnvValue(env.ELEVENLABS_VOICE_ID);
+  const fallbackVoiceId = cleanEnvValue(env.ELEVENLABS_FALLBACK_VOICE_ID) || 'FGY2WhTYpPnrIDTdsKH5';
   const modelId = env.ELEVENLABS_MODEL_ID || 'eleven_multilingual_v2';
   const outputFormat = env.ELEVENLABS_OUTPUT_FORMAT || 'mp3_44100_128';
   const stability = String(env.ELEVENLABS_STABILITY || 0.42);
@@ -110,6 +110,10 @@ function ttsConfig(env) {
     modelId,
     cacheKey: ['elevenlabs-v1', primaryVoiceId, fallbackVoiceId, modelId, outputFormat, stability, similarity, style, speakerBoost].join('|'),
   };
+}
+
+function cleanEnvValue(value) {
+  return String(value || '').trim().replace(/^[A-Z0-9_]+\s*=\s*/, '').trim();
 }
 
 function json(data, status = 200) {
